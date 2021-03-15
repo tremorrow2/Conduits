@@ -1,4 +1,4 @@
-public Class Conduit {
+public class Conduit {
     double area;
 
     public Conduit() {
@@ -38,7 +38,7 @@ public Class Conduit {
         wire_area = .555;
       } else {
         wire_area = 0;
-        System.out.println("Wire is not within current inventory")
+        System.out.println("Wire is not within current inventory");
       }
       total_area = wire_area * amount;
       area += total_area;
@@ -48,7 +48,7 @@ public Class Conduit {
       double cable_area = 0;
       double total_area = 0;
 
-      if(guage == 14) {
+      if(gauge == 14) {
         if(type == 2) {
           cable_area = .091327;
         } else if(type == 3 ) {
@@ -89,7 +89,7 @@ public Class Conduit {
         } else {
           System.out.println("No info on give cable type");
         }
-      } else if (guage == 12) {
+      } else if (gauge == 12) {
         if(type == 2) {
           cable_area = .123786;
         } else if(type == 3 ) {
@@ -134,9 +134,9 @@ public Class Conduit {
         } else {
           System.out.println("No info on give cable type");
         }
-
-        total_area = cable_area * amount;
-        area += total_area;
+      }
+      total_area = cable_area * amount;
+      area += total_area;
     }
 
     public void add_fiberOptic(int type, int amount) {
@@ -168,8 +168,8 @@ public Class Conduit {
     }
 
     public void add_circuitCable(String type, int amount) {
-      double other_area;
-      double total_area;
+      double other_area = 0;
+      double total_area = 0;
       if(type.equals("2cs")) {
         other_area = .074991;
       } else if(type.equals("3cs")) {
@@ -181,7 +181,7 @@ public Class Conduit {
 
     }
 
-    public int size() {
+    public double size() {
       return area;
     }
 
@@ -214,7 +214,7 @@ public Class Conduit {
           }  else if(area <= 11.4268) {
             trade = "6";
           }  else {
-            trade = "There is no conduit that fits this area."
+            trade = "There is no conduit that fits this area.";
           }
         } else {
           if(area <= .0741) {
@@ -242,7 +242,7 @@ public Class Conduit {
           }  else if(area <= 7.42742) {
             trade = "6";
           }  else {
-            trade = "There is no conduit that fits this area."
+            trade = "There is no conduit that fits this area.";
           }
         }
       } else {
@@ -272,7 +272,7 @@ public Class Conduit {
           }  else if(area <= 10.2392) {
             trade = "6";
           }  else {
-            trade = "There is no conduit that fits this area."
+            trade = "There is no conduit that fits this area.";
           }
         } else {
           if(area <= .05642) {
@@ -300,10 +300,11 @@ public Class Conduit {
           }  else if(area <= 6.65548) {
             trade = "6";
           }  else {
-            trade = "There is no conduit that fits this area."
+            trade = "There is no conduit that fits this area.";
           }
         }
       }
+      return trade;
     }
 
 }
