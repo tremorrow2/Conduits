@@ -23,7 +23,7 @@ public class Conduit_Calculator {
   public static void Calculate(Scanner scan) {
 
     Conduit con1 = new Conduit();
-    int area = 0;
+    double area = 0;
     String run = "";
     System.out.println("Do you have any wires?");
     System.out.print("Yes/No? ");
@@ -41,7 +41,7 @@ public class Conduit_Calculator {
 
     System.out.println("Do you have any multi cables?");
     System.out.print("Yes/No? ");
-    String ans = scan.next();
+    ans = scan.next();
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.print("What type of multi cables do you have? ");
       int type2 = scan.nextInt();
@@ -57,7 +57,7 @@ public class Conduit_Calculator {
 
     System.out.println("Do you have any fiber optic cables?");
     System.out.print("Yes/No? ");
-    String ans = scan.next();
+    ans = scan.next();
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.print("What type of fiber optic cable do you have? ");
       int type3 = scan.nextInt();
@@ -71,7 +71,7 @@ public class Conduit_Calculator {
 
     System.out.println("Do you have any circuit cables?");
     System.out.print("Yes/No? ");
-    String ans = scan.next();
+    ans = scan.next();
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.print("What type of circuit cable do you have? ");
       int type4 = scan.nextInt();
@@ -83,13 +83,15 @@ public class Conduit_Calculator {
       ans = scan.next();
     }
 
-    Sytem.out.println("What schedule is your conduit?");
-    System.out.print("40/80?" )
+    System.out.println("What schedule is your conduit?");
+    System.out.print("40/80?" );
     int sched = scan.nextInt();
-    System.out.println("Is your conduit old or new? ");
+    System.out.print("Is your conduit old or new? ");
     String age = scan.next();
     run = con1.trade_size(age,sched);
-    area = con1.size();
+    double temp_area = con1.size();
+    double scale = Math.pow(10,4);
+    area = Math.round(temp_area * scale )/scale;
     System.out.println("The mine size of your conduit is " + run);
     System.out.println("The combined area of the wires is " + area + "in squared");
   }
