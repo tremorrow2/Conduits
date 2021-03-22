@@ -1,6 +1,12 @@
 import java.util.*;
 public class Conduit {
     double area;
+    double ground_wire;
+    String condition;
+    String size;
+    int sched;
+    double allowed_area;
+    double exist_area;
     Map<String, Double> wires;
     Map<Integer, Map<Integer,Double>> multicables;
     Map<Integer, Double> fiberoptic;
@@ -9,6 +15,11 @@ public class Conduit {
 
     public Conduit() {
       area = 0.00;
+      condition = "";
+      size = "";
+      allowed_area = 0.0;
+      exist_area = 0.0;
+      sched = 0;
       create_wires();
       create_fiberoptic();
       create_multicables();
@@ -16,10 +27,27 @@ public class Conduit {
       create_trades();
     }
 
+    public void existence(int sd, String sz, String con) {
+      condition = con;
+      size = sz;
+      sched = sd;
+      exist_area = trades.get(sched).get(size);
+      allowed_area = exist_area * .40;
+
+    }
+
+    public void existence(int sd, String con) {
+      condition = con;
+      sched = sd;
+    }
+
     public void add_wires(String type, int amount) {
       double wire_area = 0;
       double total_area = 0;
       wire_area = wires.get(type);
+      if(wire_area>ground_wire) {
+        ground_wire = wire_area;
+      }
       total_area = wire_area * amount;
       area += total_area;
     }
@@ -49,32 +77,49 @@ public class Conduit {
 
     }
 
-    public void trade_size(String type, int schedule) {
+    public void add(Double dub) {
+      area += dub;
+    }
+
+    public void trade_size() {
       double perc = 0.00;
       double trade_area = 0;
       double filled = 0;
       double temp_filled = 0;
+      double filled2 = 0;
+      double temp_filled2 = 0;
       String trade = "";
-      if(type.equalsIgnoreCase("old")) {
-        perc = 0.40;
+      area+=ground_wire;
+      if(condition.equalsIgnoreCase("existing")) {
+        perc = .40;
+        temp_filled = (area/exist_area);
+        double scale = Math.pow(10,4);
+        filled = Math.round(temp_filled * 100);
+        if(temp_filled >= perc) {
+            System.out.println("This " + size + " in conduit is already filled to capacity with a an area of " + area + "in, and perecent of " + filled + "% filled.");
+        } else {
+            System.out.println("This " + size + " in conduit is not filled to capacity with a an area of " + area + "in, and perecent of " + filled + "% filled.");
+        }
+        //perc = 0.40;
       } else {
         perc = 0.26;
-      }
-      Map<String, Double> temp = trades.get(schedule);
-      Set<String> temp2 = temp.keySet();
-      Iterator<String> look = temp2.iterator();
-      trade = look.next();
-      trade_area = temp.get(trade);
-      while(area > (trade_area * perc)) {
+        Map<String, Double> temp = trades.get(sched);
+        Set<String> temp2 = temp.keySet();
+        Iterator<String> look = temp2.iterator();
         trade = look.next();
         trade_area = temp.get(trade);
+        while(area > (trade_area * perc)) {
+          trade = look.next();
+          trade_area = temp.get(trade);
+        }
+        temp_filled = (area/trade_area);
+        double scale = Math.pow(10,4);
+        filled = Math.round(temp_filled * 100);
+        System.out.println("The size of your conduit is " + trade);
+        System.out.println("The combined area of the wires is " + area + "in squared");
+        System.out.println("The percentage filled is " + filled + "%");
       }
-      temp_filled = (area/trade_area);
-      double scale = Math.pow(10,4);
-      filled = Math.round(temp_filled * 100);
-      System.out.println("The mine size of your conduit is " + trade);
-      System.out.println("The combined area of the wires is " + area + "in squared");
-      System.out.println("The percentage filled is " + filled + "%");
+
 
     }
 
@@ -94,6 +139,7 @@ public class Conduit {
       wires.put("4/0",.385);
       wires.put("250 kcmil",.478);
       wires.put("300 kcmil",.555);
+      ground_wire = wires.get("8");
     }
 
     public void create_multicables() {
@@ -200,8 +246,16 @@ public class Conduit {
 
     public void create_cs(){
       cs = new TreeMap<String, Double>();
-      cs.put("2cs",.074991);
-      cs.put("3cs",.061575);
+      cs.put("2cs",.09);
+      cs.put("3cs",.07);
+      cs.put("4cs",.06);
+      cs.put("5c",.14);
+      cs.put("7c",.17);
+      cs.put("10c",.29);
+      cs.put("6pcc",.06);
+      cs.put("orion",.132);
+      cs.put("pull",.023);
+
     }
 
     public String print_wires(){
@@ -238,6 +292,10 @@ public class Conduit {
 
     public boolean contain_cs(String s){
       return cs.containsKey(s);
+    }
+
+    public boolean contain_trade(String s){
+      return trades.get(40).containsKey(s);
     }
 
 }
