@@ -5,6 +5,7 @@ This class creates the Conduit object, the object contains multiple maps to stor
 multicables, fiberoptic cables and circuit cables, and trade sizes. The object keeps track of the total area
 used based on the wires/cables added to the object and calculates the minimum size allowed for a new conduit,
 or tells the user if it exceeds the standard limit for an existing conduit of that size*/
+
 public class Conduit {
     double area;
     double ground_wire;
@@ -339,5 +340,4 @@ public class Conduit {
     public boolean contain_trade(String s){
       return trades.get(40).containsKey(s);
     }
-
 }
