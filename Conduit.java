@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 public class Conduit {
     double area;
     double ground_wire;
@@ -81,7 +82,7 @@ public class Conduit {
       area += dub;
     }
 
-    public void trade_size() {
+    public void trade_size(PrintStream output) {
       double perc = 0.00;
       double trade_area = 0;
       double filled = 0;
@@ -95,10 +96,13 @@ public class Conduit {
         temp_filled = (area/exist_area);
         double scale = Math.pow(10,4);
         filled = Math.round(temp_filled * 100);
+        area = Math.round(area * scale)/scale;
         if(temp_filled >= perc) {
-            System.out.println("This " + size + " in conduit is already filled to capacity with a an area of " + area + "in, and perecent of " + filled + "% filled.");
+            System.out.println("This " + size + " conduit is already filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
+            output.println("    This " + size + " conduit is already filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
         } else {
-            System.out.println("This " + size + " in conduit is not filled to capacity with a an area of " + area + "in, and perecent of " + filled + "% filled.");
+            System.out.println("This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
+            output.println("    This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
         }
         //perc = 0.40;
       } else {
@@ -108,17 +112,28 @@ public class Conduit {
         Iterator<String> look = temp2.iterator();
         trade = look.next();
         trade_area = temp.get(trade);
-        while(area > (trade_area * perc)) {
-          trade = look.next();
-          trade_area = temp.get(trade);
+        if(area < (trades.get(sched).get("6"))*perc) {
+          while(area > (trade_area * perc)) {
+            trade = look.next();
+            trade_area = temp.get(trade);
+          }
+          temp_filled = (area/trade_area);
+          double scale = Math.pow(10,4);
+          filled = Math.round(temp_filled * 100);
+          area = Math.round(area * scale)/scale;
+          System.out.println("The size of your conduit is a " + trade + ".");
+          System.out.println("The combined area of the wires is " + area + " in^2.");
+          System.out.println("The percentage filled is " + filled + "%.");
+          output.println("    The size of your conduit is a " + trade + ".");
+          output.println("    The combined area of the wires is " + area + " in^2.");
+          output.println("    The percentage filled is " + filled + "%.");
+        } else {
+          output.println("    The calculated area exceeds any alllowed conduit fill under WSDOT regulations, please consider using multiple conduits.");
+          System.out.println("The calculated area exceeds any alllowed conduit fill under WSDOT regulations, please consider using multiple conduits.");
         }
-        temp_filled = (area/trade_area);
-        double scale = Math.pow(10,4);
-        filled = Math.round(temp_filled * 100);
-        System.out.println("The size of your conduit is " + trade);
-        System.out.println("The combined area of the wires is " + area + "in squared");
-        System.out.println("The percentage filled is " + filled + "%");
       }
+      System.out.println();
+      output.println();
 
 
     }
@@ -252,7 +267,7 @@ public class Conduit {
       cs.put("5c",.14);
       cs.put("7c",.17);
       cs.put("10c",.29);
-      cs.put("6pcc",.06);
+      cs.put("6pcc",.32);
       cs.put("orion",.132);
       cs.put("pull",.023);
 
