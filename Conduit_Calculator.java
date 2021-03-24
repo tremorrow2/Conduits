@@ -5,6 +5,7 @@ import java.io.*;
 This class is called Conduit_Calculator its main function is to increase
 effiency of minimum allowed size of a new conduit or to telll user if existing conduit is already filled to capacity
 This class uses the Conduit Class to store information about individual conduits*/
+
 public class Conduit_Calculator {
   public static void main(String[] args) throws FileNotFoundException {
     Scanner scan = new Scanner(System.in);
@@ -200,7 +201,4 @@ public class Conduit_Calculator {
       ans = scan.next();
     }
   }
-
-
-
 }
