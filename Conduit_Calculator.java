@@ -1,5 +1,10 @@
 import java.util.*;
 import java.io.*;
+
+/*Trevor Morrow
+This class is called Conduit_Calculator its main function is to increase
+effiency of minimum allowed size of a new conduit or to telll user if existing conduit is already filled to capacity
+This class uses the Conduit Class to store information about individual conduits*/
 public class Conduit_Calculator {
   public static void main(String[] args) throws FileNotFoundException {
     Scanner scan = new Scanner(System.in);
@@ -19,14 +24,14 @@ public class Conduit_Calculator {
 
   }
 
-
-
+  //Explains the meaning of the program
   public static void Intro() {
     System.out.println("Welcome to your conduit sizing calculator.");
     System.out.println("Do you want to calculate the minimum conduit size?");
     System.out.println("Yes/No? ");
   }
 
+  //Main Calculator Function
   public static void Calculate(Scanner scan, PrintStream output, int runs) {
     System.out.println("This calculator will ask you information about wires, multicables, fiberoptic cables and cs cables. \nIf a particlar wire or cable is not listed, after you finish the cs cables it will ask if you need to add any miscellaneous wire. \nGround wire is automatically included and calculated so you do no need to worry about it.");
     Conduit con1 = new Conduit();
@@ -39,6 +44,7 @@ public class Conduit_Calculator {
     con1.trade_size(output);
   }
 
+  //This fucntion names your current run, asked if its exsiting or new, ask the schedule and creates your conduit.
   public static void Trade(Scanner scan,PrintStream output, Conduit con1, int runs){
     String age = "";
     int sched = 0;
@@ -61,7 +67,7 @@ public class Conduit_Calculator {
         size = scan.nextLine();
 
       }
-      output.println(runs + ".  " + age + " run " + run + " of schedule " + sched + " and intitial size is a " + size + ".");
+      output.println(runs + ".  " + age + " run " + run + " of schedule " + sched + " and initial size is a " + size + ".");
       con1.existence(sched, size, age);
     } else {
       output.println(runs + ".  " + age + " run " + run + " of schedule " + sched + ".");
@@ -70,6 +76,7 @@ public class Conduit_Calculator {
 
   }
 
+  //Adds necessary wires to your conduit
   public static void Wire(Scanner scan, Conduit con1){
     String wires = con1.print_wires();
     String ans = "";
@@ -95,24 +102,21 @@ public class Conduit_Calculator {
     }
   }
 
+  //Adds neccessary multicables to your conduit
   public static void MultiCable(Scanner scan, Conduit con1) {
     String multicables = con1.print_multicables();
     String ans = "";
     while(!(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("no") || ans.equalsIgnoreCase("n"))) {
       System.out.println("Do you have any multi cables?\nYes/No? ");
-      //System.out.print("Yes/No? ");
       ans = scan.next();
     }
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.println("What type of multi cables do you have?\nYour options are\n" + multicables + " " );
-      //System.out.print("Your options are\n" + multicables);
       int type2 = scan.nextInt();
       System.out.println("What is its guage? 12/14? ");
       int guage = scan.nextInt();
       while(!con1.contain_multicables(guage,type2)) {
         System.out.println("Answer not contained in list, please try again.\n What type of multi cables do you have?\n Your options are\n" + multicables + " " );
-        //System.out.println("What type of multi cables do you have? ");
-        //System.out.print("Your options are\n" + multicables + " ");
         type2 = scan.nextInt();
         System.out.println("What is its guage? 12/14? ");
         guage = scan.nextInt();
@@ -127,6 +131,7 @@ public class Conduit_Calculator {
 
   }
 
+  //Adds neccessary fiberoptics to conduit
   public static void FiberOptic(Scanner scan, Conduit con1) {
     String fiberoptics = con1.print_fiberoptics();
     String ans = "";
@@ -152,6 +157,7 @@ public class Conduit_Calculator {
     }
   }
 
+  //Adds necessary circuit cables to conduit
   public static void CS(Scanner scan, Conduit con1) {
     String cs = con1.print_cs();
     String ans = "";
@@ -177,6 +183,7 @@ public class Conduit_Calculator {
     }
   }
 
+  //Adds any other miscellaneous wires or cables to the conduit
   public static void Misc(Scanner scan, Conduit con1) {
     String ans = "";
     while(!(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("no") || ans.equalsIgnoreCase("n"))) {
