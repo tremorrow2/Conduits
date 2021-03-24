@@ -1,5 +1,10 @@
 import java.util.*;
 import java.io.*;
+/*Trevor Morrow
+This class creates the Conduit object, the object contains multiple maps to store sizes of wires,
+multicables, fiberoptic cables and circuit cables, and trade sizes. The object keeps track of the total area
+used based on the wires/cables added to the object and calculates the minimum size allowed for a new conduit,
+or tells the user if it exceeds the standard limit for an existing conduit of that size*/
 public class Conduit {
     double area;
     double ground_wire;
@@ -14,6 +19,7 @@ public class Conduit {
     Map<String, Double> cs;
     Map<Integer,Map<String,Double>> trades;
 
+    //creates an empty conduit and creates the maps for the wires, multicables, fiberoptics, circuit cables and trade sizes
     public Conduit() {
       area = 0.00;
       condition = "";
@@ -28,6 +34,7 @@ public class Conduit {
       create_trades();
     }
 
+    //For existing conduits sets the condition to "existing", sched to neccessry schedule, and fines the allowed area for given trade size
     public void existence(int sd, String sz, String con) {
       condition = con;
       size = sz;
@@ -37,11 +44,13 @@ public class Conduit {
 
     }
 
+    //For new conduits sets the condition to "new", and sched to neccessary schedule
     public void existence(int sd, String con) {
       condition = con;
       sched = sd;
     }
 
+    //Adds total wire area to area of conduit
     public void add_wires(String type, int amount) {
       double wire_area = 0;
       double total_area = 0;
@@ -53,6 +62,7 @@ public class Conduit {
       area += total_area;
     }
 
+    //Adds total multicable area to area of conduit
     public void add_multiCable(int type, int gauge, int amount) {
       double cable_area = 0;
       double total_area = 0;
@@ -61,6 +71,7 @@ public class Conduit {
       area += total_area;
     }
 
+    //Adds total fiberoptic area to area of conduit
     public void add_fiberOptic(int type, int amount) {
       double optic_area = 0;
       double total_area = 0;
@@ -69,6 +80,7 @@ public class Conduit {
       area += total_area;
     }
 
+    //Adds total circuit cable area to area of conduit
     public void add_cs(String type, int amount) {
       double cs_area = 0;
       double total_area = 0;
@@ -78,10 +90,12 @@ public class Conduit {
 
     }
 
+    //Adds miscellaneous area to area of conduit
     public void add(Double dub) {
       area += dub;
     }
 
+    //Outputs the minimum trade size allowed for new conduit or outputs if the conduit is filled to capacity if existing
     public void trade_size(PrintStream output) {
       double perc = 0.00;
       double trade_area = 0;
@@ -104,7 +118,6 @@ public class Conduit {
             System.out.println("This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
             output.println("    This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
         }
-        //perc = 0.40;
       } else {
         perc = 0.26;
         Map<String, Double> temp = trades.get(sched);
@@ -134,12 +147,12 @@ public class Conduit {
       }
       System.out.println();
       output.println();
-
-
     }
 
+    //Creates map for individual wire and their sizes
     public void create_wires() {
       wires = new TreeMap<String,Double>();
+
       wires.put("14",.023);
       wires.put("12",.029);
       wires.put("10",.035);
@@ -157,10 +170,12 @@ public class Conduit {
       ground_wire = wires.get("8");
     }
 
+    //Creates maps for multicables and their sizes divided by allowed guages
     public void create_multicables() {
       Map<Integer, Double> multicables12 = new TreeMap<Integer,Double>();
       Map<Integer, Double> multicables14 = new TreeMap<Integer,Double>();
       multicables = new TreeMap<Integer,Map<Integer,Double>>();
+
       multicables12.put(2,.123786);
       multicables12.put(3,.138544);
       multicables12.put(4,.165468);
@@ -201,11 +216,51 @@ public class Conduit {
       multicables.put(14,multicables14);
     }
 
-    public void create_trades() {
+    //Creates map for fiberoptics and their areas
+    public void create_fiberoptic(){
+      fiberoptic = new TreeMap<Integer,Double>();
 
+      fiberoptic.put(12,.134215);
+      fiberoptic.put(24,.134215);
+      fiberoptic.put(36,.134215);
+      fiberoptic.put(48,.134215);
+      fiberoptic.put(60,.134215);
+      fiberoptic.put(72,.134215);
+      fiberoptic.put(84,.181193);
+      fiberoptic.put(96,.181193);
+      fiberoptic.put(108,.303904);
+      fiberoptic.put(120,.303904);
+      fiberoptic.put(144,.303904);
+      fiberoptic.put(156,.311646);
+      fiberoptic.put(192,.311646);
+      fiberoptic.put(216,.311646);
+      fiberoptic.put(228,.403241);
+      fiberoptic.put(240,.403241);
+      fiberoptic.put(288,.403241);
+      fiberoptic.put(432,.547135);
+    }
+
+    //Creates map for circuit cables and their areas
+    public void create_cs(){
+      cs = new TreeMap<String, Double>();
+
+      cs.put("2cs",.09);
+      cs.put("3cs",.07);
+      cs.put("4cs",.06);
+      cs.put("5c",.14);
+      cs.put("7c",.17);
+      cs.put("10c",.29);
+      cs.put("6pcc",.32);
+      cs.put("orion",.132);
+      cs.put("pull",.023);
+    }
+
+    //Creates map for trades and their areas divided by their schedule
+    public void create_trades() {
       Map<String, Double> TradeArea40 = new TreeMap<String, Double>();
       Map<String, Double> TradeArea80 = new TreeMap<String, Double>();
       trades = new TreeMap<Integer,Map<String, Double>>();
+
       TradeArea40.put("1/2",.285);
       TradeArea40.put("3/4",.508);
       TradeArea40.put("1",.832);
@@ -234,81 +289,53 @@ public class Conduit {
 
       trades.put(40,TradeArea40);
       trades.put(80,TradeArea80);
-
-
-    }
-    public void create_fiberoptic(){
-      fiberoptic = new TreeMap<Integer,Double>();
-      fiberoptic.put(12,.134215);
-      fiberoptic.put(24,.134215);
-      fiberoptic.put(36,.134215);
-      fiberoptic.put(48,.134215);
-      fiberoptic.put(60,.134215);
-      fiberoptic.put(72,.134215);
-      fiberoptic.put(84,.181193);
-      fiberoptic.put(96,.181193);
-      fiberoptic.put(108,.303904);
-      fiberoptic.put(120,.303904);
-      fiberoptic.put(144,.303904);
-      fiberoptic.put(156,.311646);
-      fiberoptic.put(192,.311646);
-      fiberoptic.put(216,.311646);
-      fiberoptic.put(228,.403241);
-      fiberoptic.put(240,.403241);
-      fiberoptic.put(288,.403241);
-      fiberoptic.put(432,.547135);
     }
 
-    public void create_cs(){
-      cs = new TreeMap<String, Double>();
-      cs.put("2cs",.09);
-      cs.put("3cs",.07);
-      cs.put("4cs",.06);
-      cs.put("5c",.14);
-      cs.put("7c",.17);
-      cs.put("10c",.29);
-      cs.put("6pcc",.32);
-      cs.put("orion",.132);
-      cs.put("pull",.023);
-
-    }
-
+    //Prints allowed wires
     public String print_wires(){
       Set<String> wires2 = wires.keySet();
       return wires2.toString();
     }
 
+    //Prints allowed multicables
     public String print_multicables(){
       Set<Integer> multicables2 = multicables.get(14).keySet();
       return multicables2.toString();
     }
 
+    //Prints allowed fiberoptics
     public String print_fiberoptics(){
       Set<Integer> fiberoptic2 = fiberoptic.keySet();
       return fiberoptic2.toString();
     }
 
+    //Prints allowed circuit cables
     public String print_cs(){
       Set<String> cs2 = cs.keySet();
       return cs2.toString();
     }
 
+    //Determines if given wire is listed in map
     public boolean contain_wire(String s){
       return wires.containsKey(s);
     }
 
+    //Determines if given multicable is listed in map
     public boolean contain_multicables(int gauge, int x){
       return multicables.get(gauge).containsKey(x);
     }
 
+    //Determines if given fiberoptic is listed in map
     public boolean contain_fiberoptic(int x){
       return fiberoptic.containsKey(x);
     }
 
+    //Determines if given circuit cable is listed in map
     public boolean contain_cs(String s){
       return cs.containsKey(s);
     }
 
+    //Determines if given trade size is listed in map
     public boolean contain_trade(String s){
       return trades.get(40).containsKey(s);
     }
