@@ -4,11 +4,13 @@ import java.io.*;
 public class Line_Loss {
 
   int tot_volt;
+  int segments;
   Map<String, Double> wires;
   Map<String, Double> branch;
   public Line_Loss(int voltage) {
 
     tot_volt = voltage;
+    segments = 0;
     branch = new TreeMap<String,Double>();
     create_wires();
   }
@@ -18,6 +20,7 @@ public class Line_Loss {
     double resistance = branch.get(wire);
     line_loss = resistance * load * len;
     branch.put(seg,line_loss);
+    segment++;
   }
 
   public void loss_percentages() {
@@ -30,13 +33,13 @@ public class Line_Loss {
     line = look.next();
     while(line != null) {
       loss = branch.get(line);
-      percent = 1-()(tot_volt-loss)/tot_volt);
+      percent = 1-((tot_volt-loss)/tot_volt);
       tot_percent += percent;
       System.out.println("Segment " + line + " has a line loss of " + loss + " for a loss percentage of " + percent + "%.");
     }
     System.out.println("The total percentage loss for this branch is " + tot_percent + "%.");
   }
-  
+
   //Creates map for individual wire and their sizes
   public void create_wires() {
     wires = new TreeMap<String,Double>();
@@ -57,6 +60,19 @@ public class Line_Loss {
 
   }
 
+  //Prints allowed wires
+  public String print_wires(){
+    Set<String> wires2 = wires.keySet();
+    return wires2.toString();
+  }
 
+  //Determines if given wire is listed in map
+  public boolean contain_wire(String s){
+    return wires.containsKey(s);
+  }
+
+  public int size(){
+    return segments;
+  }
 
 }
