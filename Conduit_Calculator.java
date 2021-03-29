@@ -12,17 +12,22 @@ public class Conduit_Calculator {
     System.out.println("Create a name for the file that you want to export your runs to, make sure name ends in .txt");
     String name = scan.next();
     PrintStream output = new PrintStream(new File(name));
-    Intro(scan,output)
+    Intro(scan,output);
   }
 
   //Explains the meaning of the program
-  public static void Intro(Scanner Scan, PrintStream output) {
+  public static void Intro(Scanner scan, PrintStream output) {
     int runs = 0;
     int branches = 0;
     System.out.println("Welcome to your conduit sizing calculator.");
     System.out.println("Do you want to calculate the minimum conduit size?");
     System.out.println("Yes/No? ");
     String ans = scan.next();
+    if(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
+       System.out.println("This calculator will ask you information about wires, multicables, fiberoptic cables and cs cables. \nIf a particlar wire or cable is not listed, after you finish the cs cables it will ask if you need to add any miscellaneous wire. \nGround wire is automatically included and calculated so you do no need to worry about it.");
+       output.println("Conduit Sizing");
+       output.println();
+    } 
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       runs++;
       Calculate(scan, output, runs);
@@ -30,8 +35,13 @@ public class Conduit_Calculator {
       System.out.println("Yes/No? ");
       ans = scan.next();
     }
-    System.out.println("Do you want to calculate line loss percentage for different branches?\nYes/No?")
+    System.out.println("Do you want to calculate line loss percentage for different branches?\nYes/No?");
     ans = scan.next();
+    if(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
+      System.out.println("This calculator will ask you information about your total voltage allowed, the type of wire in a segment, the length of the segment, and the amp load of that segment.");
+      output.println("LINE LOSS BRANCHES");
+      output.println();
+    } 
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       branches++;
       Lines(scan, output, branches);
@@ -43,7 +53,6 @@ public class Conduit_Calculator {
 
   //Main Calculator Function
   public static void Calculate(Scanner scan, PrintStream output, int runs) {
-    System.out.println("This calculator will ask you information about wires, multicables, fiberoptic cables and cs cables. \nIf a particlar wire or cable is not listed, after you finish the cs cables it will ask if you need to add any miscellaneous wire. \nGround wire is automatically included and calculated so you do no need to worry about it.");
     Conduit con1 = new Conduit();
     Trade(scan, output, con1, runs);
     Wire(scan,con1);
@@ -212,38 +221,37 @@ public class Conduit_Calculator {
   }
 
   public static void Lines(Scanner scan, PrintStream output, int branches) {
-    System.out.println("This calculator will ask you information about your total voltage allowed, the type of wire in a segment, the length of the segment, and the amp load of that segment.");
     System.out.println("What is the name of this branch?");
     String name = scan.next();
     System.out.println("What is the total voltage for this branch?");
     int volt = scan.nextInt();
     Line_Loss bran = new Line_Loss(volt);
     String wires = bran.print_wires();
-    System.out.println("Do you want to add a segment to this branch?");
     String ans = "";
     while(!(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("no") || ans.equalsIgnoreCase("n"))) {
       System.out.println("Do you want to add a segment to this branch?");
       ans = scan.next();
     }
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
-      System.out.println("What is the name of this segment?");
-      String seg = scan.next();
       System.out.println("What is the length of this segment in feet?");
       int len = scan.nextInt();
       System.out.println("What is the amp load of this segment?");
-      System.out.println("Your options are\n" + wires);
-      int load = scan.nextInt();
+      
+      double load = scan.nextDouble();
       System.out.println("What type of wire is being used in your segment?");
+      System.out.println("Your options are\n" + wires);
       String type = scan.nextLine();
-      while(!con1.contain_wire(type)) {
-        System.out.println("Answer not contained in list, please try again.");
-        type = scan.nextLine();
+      while(!bran.contain_wire(type)) {
+         type = scan.nextLine();
       }
-      bran.new_line(seg,len,load,type);
-      System.out.println("DO you want to add another segment?");
+      bran.new_line(len,load,type);
+      System.out.println("Do you want to add another segment?");
       ans = scan.next();
     }
-    System.out.println(branches + ".  Branch " + name + "with a total voltage of " + volt + "V has " + bran.size() + " segments.");
-    bran.loss_percentages();
+    System.out.println(branches + ".  Branch " + name + " with a total voltage of " + volt + "V has " + bran.size() + " segments.");
+    output.println(branches + ".  Branch " + name + " with a total voltage of " + volt + "V has " + bran.size() + " segments.");
+    output.println();
+    bran.loss_percentages(output);
+    output.println();
   }
 }
