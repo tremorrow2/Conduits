@@ -21,42 +21,41 @@ public class Line_Loss {
     segments++;
     line_loss = resistance * load * len * 2;
     branch.put(segments,line_loss);
-    
+
   }
 
   public void loss_percentages(PrintStream output) {
     double tot_percentage = 0.00;
     double loss = 0;
     double percent = 0.00;
-    String perc = "";
-    String ln = "";
-    String tot_perc = "";
+    double perc = 0.0;
+    double ln = 0.0;
+    double tot_perc = 0.0;
     int line = 0;
     Set<Integer> temp = branch.keySet();
     Iterator<Integer> look = temp.iterator();
     line = look.next();
     while(look.hasNext()) {
       loss = branch.get(line);
-      ln = String.format("%.2g%n",loss);
+      ln = Math.round(loss*100.0)/100.0;
       percent = (1-((tot_volt-loss)/tot_volt))*100;
-      perc = String.format("%.2g%n",percent);
+      perc = Math.round(percent*100.0)/100.0;
       tot_percentage += percent;
-      tot_perc = String.format("%.3g%n",tot_percentage);
-      System.out.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-      output.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
+      tot_perc = Math.round(tot_percentage*1000.0)/1000.0;
+      System.out.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cumulative drop percentage of " + tot_perc + "%.");
+      output.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "%\n    and a cumulative drop percentage of " + tot_perc + "%.");
       line = look.next();
     }
     loss = branch.get(line);
-    ln = String.format("%.2g%n",loss);
+    ln = Math.round(loss*100.0)/100.0;
     percent = (1-((tot_volt-loss)/tot_volt))*100;
-    perc = String.format("%.2g%n",percent);
+    perc = Math.round(percent*100.0)/100.0;
     tot_percentage += percent;
-    tot_perc = String.format("%.2g%n",tot_percentage);
-    System.out.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-    output.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-    tot_perc = String.format("%.3g%n",tot_percentage);
-    System.out.println("The total percentage loss for this branch is " + tot_perc + "%.");
-    output.println("The total percentage loss for this branch is " + tot_perc + "%.");
+    tot_perc = Math.round(tot_percentage*1000.0)/1000.0;
+    System.out.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cumulative drop percentage of " + tot_perc + "%.");
+    output.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "%\n    and a cumulative drop percentage of " + tot_perc + "%.");
+    System.out.println("    The total percentage loss for this branch is " + tot_perc + "%.");
+    output.println("    The total percentage loss for this branch is " + tot_perc + "%.");
   }
 
   //Creates map for individual wire and their sizes
@@ -93,12 +92,12 @@ public class Line_Loss {
   public int size(){
     return segments;
   }
-  
+
   /*
   public double print_segs(int line,double tot, PrintStream output) {
    double tot_percentage = 0.00;
    double percent = 0.00;
-   
+
    String perc = "";
    String ln = "";
    String tot_perc = "";
@@ -110,7 +109,7 @@ public class Line_Loss {
    tot_perc = String.format("%.2g%n",tot_percentage);
    System.out.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
    output.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-   return tot_percentage;   
+   return tot_percentage;
 
   }*/
 

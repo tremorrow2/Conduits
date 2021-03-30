@@ -110,14 +110,14 @@ public class Conduit {
         perc = .40;
         temp_filled = (area/exist_area);
         double scale = Math.pow(10,4);
-        filled = Math.round(temp_filled * 100);
+        filled = Math.round(temp_filled * 100.00);
         area = Math.round(area * scale)/scale;
         if(temp_filled >= perc) {
-            System.out.println("This " + size + " conduit is already filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
-            output.println("    This " + size + " conduit is already filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
+            System.out.println("This " + size + " conduit is already filled to capacity with a an area of " + area + " in^2, and has " + filled + "% filled.");
+            output.println("    This " + size + " conduit is already filled to capacity with a an area of " + area + " in^2,\n    and has " + filled + "% filled.");
         } else {
-            System.out.println("This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
-            output.println("    This " + size + " conduit is not filled to capacity with a an area of " + area + "in^2, and perecent of " + filled + "% filled.");
+            System.out.println("This " + size + " conduit is not filled to capacity with a an area of " + area + " in^2, and perecent of " + filled + "% filled.");
+            output.println("    This " + size + " conduit is not filled to capacity with a an area of " + area + " in^2,\n    and has " + filled + "% filled.");
         }
       } else {
         perc = 0.26;
@@ -133,7 +133,7 @@ public class Conduit {
           }
           temp_filled = (area/trade_area);
           double scale = Math.pow(10,4);
-          filled = Math.round(temp_filled * 100);
+          filled = Math.round(temp_filled * 100.00);
           area = Math.round(area * scale)/scale;
           System.out.println("The size of your conduit is a " + trade + ".");
           System.out.println("The combined area of the wires is " + area + " in^2.");
