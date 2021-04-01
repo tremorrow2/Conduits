@@ -14,8 +14,8 @@ public class Conduit {
     int sched;
     double allowed_area;
     double exist_area;
-    Map<String, Double> wires;
-    Map<Integer, Map<Integer,Double>> multicables;
+    LinkedHashMap<String, Double> wires;
+    Map<Integer, LinkedHashMap<String,Double>> multicables;
     Map<Integer, Double> fiberoptic;
     Map<String, Double> cs;
     Map<Integer,Map<String,Double>> trades;
@@ -31,7 +31,6 @@ public class Conduit {
       create_wires();
       create_fiberoptic();
       create_multicables();
-      create_cs();
       create_trades();
     }
 
@@ -64,7 +63,7 @@ public class Conduit {
     }
 
     //Adds total multicable area to area of conduit
-    public void add_multiCable(int type, int gauge, int amount) {
+    public void add_multiCable(String type, int gauge, int amount) {
       double cable_area = 0;
       double total_area = 0;
       cable_area = multicables.get(gauge).get(type);
@@ -81,15 +80,6 @@ public class Conduit {
       area += total_area;
     }
 
-    //Adds total circuit cable area to area of conduit
-    public void add_cs(String type, int amount) {
-      double cs_area = 0;
-      double total_area = 0;
-      cs_area = cs.get(type);
-      total_area = cs_area * amount;
-      area += total_area;
-
-    }
 
     //Adds miscellaneous area to area of conduit
     public void add(Double dub) {
@@ -152,7 +142,7 @@ public class Conduit {
 
     //Creates map for individual wire and their sizes
     public void create_wires() {
-      wires = new TreeMap<String,Double>();
+      wires = new LinkedHashMap<>();
 
       wires.put("14",.023);
       wires.put("12",.029);
@@ -173,48 +163,55 @@ public class Conduit {
 
     //Creates maps for multicables and their sizes divided by allowed guages
     public void create_multicables() {
-      Map<Integer, Double> multicables12 = new TreeMap<Integer,Double>();
-      Map<Integer, Double> multicables14 = new TreeMap<Integer,Double>();
-      multicables = new TreeMap<Integer,Map<Integer,Double>>();
+      LinkedHashMap<String, Double> multicables12 = new LinkedHashMap<String,Double>();
+      LinkedHashMap<String, Double> multicables14 = new LinkedHashMap<String,Double>();
+      LinkedHashMap<String, Double> multicables18 = new LinkedHashMap<String,Double>();
+      LinkedHashMap<String, Double> multicables19 = new LinkedHashMap<String,Double>();
+      LinkedHashMap<String, Double> multicables20 = new LinkedHashMap<String,Double>();
+      //Map<String, Double> multicablesmisc = new TreeMap<String,Double>();
+      multicables = new TreeMap<Integer,LinkedHashMap<String,Double>>();
 
-      multicables12.put(2,.123786);
-      multicables12.put(3,.138544);
-      multicables12.put(4,.165468);
-      multicables12.put(6,0.0);
-      multicables12.put(5,.198713);
-      multicables12.put(7,.263298);
-      multicables12.put(8,0.0);
-      multicables12.put(9,.359971);
-      multicables12.put(10,.369605);
-      multicables12.put(12,.445328);
-      multicables12.put(14,0.0);
-      multicables12.put(15,0.0);
-      multicables12.put(16,.602696);
-      multicables12.put(19,.677831);
-      multicables12.put(20,.748151);
-      multicables12.put(21,.748151);
-      multicables12.put(25,.916088);
-      multicables12.put(26,0.0);
-      multicables14.put(2,.091327);
-      multicables14.put(3,.101223);
-      multicables14.put(4,.120072);
-      multicables14.put(5,.14522);
-      multicables14.put(6,.169093);
-      multicables14.put(7,.169093);
-      multicables14.put(8,.201886);
-      multicables14.put(9,.256072);
-      multicables14.put(10,.275254);
-      multicables14.put(12,.31769);
-      multicables14.put(14,.350464);
-      multicables14.put(15,.389256);
-      multicables14.put(16,.389256);
-      multicables14.put(19,.431247);
-      multicables14.put(20,.476612);
-      multicables14.put(21,.476612);
-      multicables14.put(25,0.0);
-      multicables14.put(26,.672006);
+      multicables12.put("2",.123786);
+      multicables12.put("3",.138544);
+      multicables12.put("4",.165468);
+      multicables12.put("5",.198713);
+      multicables12.put("7",.263298);
+      multicables12.put("9",.359971);
+      multicables12.put("10",.369605);
+      multicables12.put("12",.445328);
+      multicables12.put("16",.602696);
+      multicables12.put("19",.677831);
+      multicables12.put("20",.748151);
+      multicables12.put("21",.748151);
+      multicables12.put("25",.916088);
+      multicables14.put("2",.091327);
+      multicables14.put("3",.101223);
+      multicables14.put("4",.120072);
+      multicables14.put("5",.14522);
+      multicables14.put("6",.169093);
+      multicables14.put("7",.169093);
+      multicables14.put("8",.201886);
+      multicables14.put("9",.256072);
+      multicables14.put("10",.275254);
+      multicables14.put("12",.31769);
+      multicables14.put("14",.350464);
+      multicables14.put("15",.389256);
+      multicables14.put("16",.389256);
+      multicables14.put("19",.431247);
+      multicables14.put("20",.476612);
+      multicables14.put("21",.476612);
+      multicables14.put("26",.672006);
+      multicables14.put("2cs",.09);
+      multicables18.put("4cs",.06);
+      multicables19.put("6pcc",.32);
+      multicables20.put("3cs",.07);
       multicables.put(12,multicables12);
       multicables.put(14,multicables14);
+      multicables.put(18,multicables18);
+      multicables.put(19,multicables19);
+      multicables.put(20,multicables20);
+
+
     }
 
     //Creates map for fiberoptics and their areas
@@ -241,25 +238,11 @@ public class Conduit {
       fiberoptic.put(432,.547135);
     }
 
-    //Creates map for circuit cables and their areas
-    public void create_cs(){
-      cs = new TreeMap<String, Double>();
-
-      cs.put("2cs",.09);
-      cs.put("3cs",.07);
-      cs.put("4cs",.06);
-      cs.put("5c",.14);
-      cs.put("7c",.17);
-      cs.put("10c",.29);
-      cs.put("6pcc",.32);
-      cs.put("orion",.132);
-      cs.put("pull",.023);
-    }
 
     //Creates map for trades and their areas divided by their schedule
     public void create_trades() {
-      Map<String, Double> TradeArea40 = new TreeMap<String, Double>();
-      Map<String, Double> TradeArea80 = new TreeMap<String, Double>();
+      LinkedHashMap<String, Double> TradeArea40 = new LinkedHashMap<>();
+      LinkedHashMap<String, Double> TradeArea80 = new LinkedHashMap<>();
       trades = new TreeMap<Integer,Map<String, Double>>();
 
       TradeArea40.put("1/2",.285);
@@ -300,8 +283,14 @@ public class Conduit {
 
     //Prints allowed multicables
     public String print_multicables(){
-      Set<Integer> multicables2 = multicables.get(14).keySet();
-      return multicables2.toString();
+      Set<String> multicables2 = multicables.get(12).keySet();
+      Set<String> multicables3 = multicables.get(14).keySet();
+      Set<String> multicables4 = multicables.get(18).keySet();
+      Set<String> multicables5 = multicables.get(19).keySet();
+      Set<String> multicables6 = multicables.get(20).keySet();
+      String ss = "";
+      ss = "12: " + multicables2.toString() + "\n14: " + multicables3.toString() + "\n18: " + multicables4.toString() + "\n19: " + multicables5.toString() + "\n20: " + multicables6.toString();
+      return ss;
     }
 
     //Prints allowed fiberoptics
@@ -322,7 +311,7 @@ public class Conduit {
     }
 
     //Determines if given multicable is listed in map
-    public boolean contain_multicables(int gauge, int x){
+    public boolean contain_multicables(int gauge, String x){
       return multicables.get(gauge).containsKey(x);
     }
 
