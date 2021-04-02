@@ -1,6 +1,12 @@
 import java.util.*;
 import java.io.*;
-
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Stream;
 /*Trevor Morrow
 This class is called Conduit_Calculator its main function is to increase
 effiency of minimum allowed size of a new conduit or to telll user if existing conduit is already filled to capacity
@@ -10,7 +16,8 @@ public class Electrical_Calculator {
   public static void main(String[] args) throws FileNotFoundException {
     Scanner scan = new Scanner(System.in);
     System.out.println("Create a name for the file that you want to export your calculations to.");
-    String name = scan.next();
+    String name = scan.nextLine();
+    scan.nextLine();
     String file = name + ".txt";
     PrintStream output = new PrintStream(new File(file));
     output.println("                        " + name + " Calculations");
@@ -60,7 +67,6 @@ public class Electrical_Calculator {
     Wire(scan,con1);
     MultiCable(scan,con1);
     FiberOptic(scan,con1);
-    CS(scan,con1);
     Misc(scan,con1);
     con1.trade_size(output);
   }
@@ -100,22 +106,11 @@ public class Electrical_Calculator {
       }
     }
 
-
-    /*
-    while(!(sched == 40 || sched == 80)) {
-      System.out.println("What schedule is your conduit?");
-      System.out.println("40/80? " );
-      sched = scan.nextInt();
-    }
-    while(!(age.equalsIgnoreCase("existing") || age.equalsIgnoreCase("new"))){
-      System.out.println("Is your conduit existing or new? ");
-      age = scan.next();
-    }*/
-
     if(age.equalsIgnoreCase("existing")) {
       while(!con1.contain_trade(size)){
         System.out.println("What size is your existing conduit? ");
         size = scan.nextLine();
+        scan.nextLine();
 
       }
       output.println(runs + ".  " + age + " run " + run + " of schedule " + sched + " and initial size is a " + size + ".");
@@ -140,7 +135,9 @@ public class Electrical_Calculator {
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.println("What type of wire do you have? ");
       String type = scan.nextLine();
+
       while(!con1.contain_wire(type)) {
+
         type = scan.nextLine();
       }
       System.out.println("How many of this type of wire? ");
@@ -157,18 +154,18 @@ public class Electrical_Calculator {
     String multicables = con1.print_multicables();
     String ans = "";
     while(!(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("no") || ans.equalsIgnoreCase("n"))) {
-      System.out.println("Do you have any multi cables?\nYes/No? ");
+      System.out.println("Do you have any signal cables?\nYes/No? ");
       System.out.println("Your options are\n" + multicables + " " );
       ans = scan.next();
     }
     while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
       System.out.println("What type of multi cables do you have?");
-      int type2 = scan.nextInt();
+      String type2 = scan.next();
       System.out.println("What is its gauge? 12/14? ");
       int guage = scan.nextInt();
       while(!con1.contain_multicables(guage,type2)) {
         System.out.println("Answer not contained in list, please try again.");
-        type2 = scan.nextInt();
+        type2 = scan.next();
         System.out.println("What is its guage? 12/14? ");
         guage = scan.nextInt();
       }
@@ -203,32 +200,6 @@ public class Electrical_Calculator {
       int amount3 = scan.nextInt();
       con1.add_fiberOptic(type3,amount3);
       System.out.println("Do you have any more fiber optic cables?");
-      System.out.println("Yes/No? ");
-      ans = scan.next();
-    }
-  }
-
-  //Adds necessary circuit cables to conduit
-  public static void CS(Scanner scan, Conduit con1) {
-    String cs = con1.print_cs();
-    String ans = "";
-    while(!(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y") || ans.equalsIgnoreCase("no") || ans.equalsIgnoreCase("n"))) {
-      System.out.println("Do you have any cs cables?");
-      System.out.println("Your options are\n" + cs + " ");
-      System.out.println("Yes/No? ");
-      ans = scan.next();
-    }
-    while(ans.equalsIgnoreCase("yes") || ans.equalsIgnoreCase("y")) {
-      System.out.println("What type of circuit cable do you have? ");
-      String type4 = scan.next();
-      while(!con1.contain_cs(type4)) {
-        System.out.println("Answer not contained in list, please try again. ");
-        type4 = scan.next();
-      }
-      System.out.println("How many of this type of circuit cable? ");
-      int amount4 = scan.nextInt();
-      con1.add_cs(type4,amount4);
-      System.out.println("Do you have any more circuit cables?");
       System.out.println("Yes/No? ");
       ans = scan.next();
     }
