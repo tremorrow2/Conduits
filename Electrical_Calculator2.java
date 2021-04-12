@@ -1,11 +1,15 @@
 import java.io.*;
+import javax.imageio.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Stream;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 
 public class Electrical_Calculator2 {
   public static void main(String[] args) throws FileNotFoundException {
@@ -17,20 +21,22 @@ public class Electrical_Calculator2 {
     Scanner scan = new Scanner(System.in);
     System.out.println("Create a name for the file that you want to export your calculations to.");
     String name = scan.nextLine();
+    String date = get_date();
     scan.nextLine();
     String file = name + ".txt";
     PrintStream output = new PrintStream(new File(file));
-    output.println("                        " + name + " Calculations");
+    output.println("                                                            " + date);
+    output.println("                            " + name + " Calculations");
+    output.println();
     SwingUtilities.invokeLater(() -> {
       Intro(output);
     });
   }
 
   public static void Intro(PrintStream output) {
-    JFrame frame = set_frame();
-    JButton CONBT = new JButton("CONDUIT");
-    JButton LINBT = new JButton("LINE LOSS");
-
+    JFrame frame = set_small_frame();
+    JButton CONBT = new JButton("YES");
+    JButton LINBT = new JButton("NO");
     JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.LEFT));
     ECControlPanel.add(CONBT);
@@ -42,7 +48,7 @@ public class Electrical_Calculator2 {
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("What do you want to measure today?");
+    infoTextArea.setText("Do you want to measure conduit sizes?");
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -55,28 +61,20 @@ public class Electrical_Calculator2 {
     frame.add(mainPanel, BorderLayout.CENTER);
 
     CONBT.addActionListener((e) -> {
+      output.println("CONDUIT SIZING");
+      output.println();
       Con_frame(output);
+      frame.setVisible(false);
     });
     LINBT.addActionListener((e) -> {
-      Line_frame(output);
+      LineQ_frame(output);
+      frame.setVisible(false);
     });
 
-  }
-
-  public static JFrame set_frame() {
-    JFrame frame = new JFrame();
-    frame.setTitle("Electrical Calculator by Trevor Morrow");
-    frame.setLayout(new BorderLayout());
-    frame.setSize(new Dimension(800, 650));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setLocationRelativeTo(null);
-    frame.setResizable(false);
-    frame.setVisible(true);
-    return frame;
   }
 
   public static void Con_frame(PrintStream output) {
-    JFrame frame = set_frame();
+    JFrame frame = set_small_frame();
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
@@ -93,11 +91,13 @@ public class Electrical_Calculator2 {
     JButton EBT40 = new JButton("Existing 40");
     JButton NBT80 = new JButton("New 80");
     JButton EBT80 = new JButton("Existing 80");
+    JButton Done = new JButton("Done");
     JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     ECControlPanel.add(NBT40);
     ECControlPanel.add(NBT80);
     ECControlPanel.add(EBT40);
     ECControlPanel.add(EBT80);
+    ECControlPanel.add(Done);
     JPanel ECTextPanel = new JPanel();
     ECTextPanel.setLayout(new BorderLayout());
     ECTextPanel.add(nameLabel, BorderLayout.NORTH);
@@ -127,36 +127,49 @@ public class Electrical_Calculator2 {
 
     NBT40.addActionListener((e) -> {
       String name = nameArea.getText().trim();
+
       Run_frame(null,output,name,"New",40);
+      frame.setVisible(false);
     });
 
     EBT40.addActionListener((e) -> {
       String name = nameArea.getText().trim();
       String size = exArea.getText().trim();
+
       Run_frame(size,output,name,"Existing",40);
+      frame.setVisible(false);
     });
 
     NBT80.addActionListener((e) -> {
       String name = nameArea.getText().trim();
+
       Run_frame(null,output,name,"New",80);
+      frame.setVisible(false);
     });
 
     EBT80.addActionListener((e) -> {
       String name = nameArea.getText().trim();
       String size = exArea.getText().trim();
+
       Run_frame(size,output,name,"Existing",80);
+      frame.setVisible(false);
+    });
+
+    Done.addActionListener((e) -> {
+      LineQ_frame(output);
+      frame.setVisible(false);
     });
   }
 
   public static void Run_frame(String size, PrintStream output, String name, String age, int sched) {
-    JFrame frame = set_frame();
+    JFrame frame = set_large_frame();
     Conduit con1 = new Conduit();
 
     if(age.equalsIgnoreCase("new")) {
       con1.existence(sched,age);
-      output.println(age + " run " + name + " of schedule " + sched + ".");
+      output.println("    " + age + " run " + name + " of schedule " + sched + ".");
     } else {
-      output.println(age + " run " + name + " of schedule " + sched + " and initial size is a " + size + ".");
+      output.println("    " + age + " run " + name + " of schedule " + sched + " and initial size is a " + size + ".");
       con1.existence(sched, size, age);
     }
 
@@ -164,6 +177,7 @@ public class Electrical_Calculator2 {
     JButton AddWire = new JButton("Add Wire");
     JButton AddMCable = new JButton("Add MultiCable");
     JButton AddFiberOptic = new JButton("Add FiberOptic");
+    JButton AddMisc = new JButton("Add Misc");
     JButton Done = new JButton("Done");
     JTextArea typeArea = new JTextArea(2,20);
     typeArea.setLineWrap(true);
@@ -191,6 +205,7 @@ public class Electrical_Calculator2 {
     control.add(AddWire);
     control.add(AddMCable);
     control.add(AddFiberOptic);
+    control.add(AddMisc);
     control.add(Done);
     type.add(typeLabel, BorderLayout.NORTH);
     type.add(typeArea,BorderLayout.CENTER);
@@ -204,7 +219,7 @@ public class Electrical_Calculator2 {
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\nWires:\n" + con1.print_wires() + "\nSignal Cables:\n" + con1.print_multicables() + "\nFiber Optics:\n" + con1.print_fiberoptics());
+    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\nWires:\n" + con1.print_wires() + "\nSignal Cables:\n" + con1.print_multicables() + "\nFiber Optics:\n" + con1.print_fiberoptics() + "\nMiscellaneous:\n" + con1.print_misc());
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -231,7 +246,7 @@ public class Electrical_Calculator2 {
       String a = amountArea.getText().trim();
       int a2 = Integer.parseInt(a);
       String g = awgArea.getText().trim();
-      int g2 = Integer.parseInt(a);
+      int g2 = Integer.parseInt(g);
       con1.add_multiCable(w,g2,a2);
       typeArea.setText(null);
       amountArea.setText(null);
@@ -249,15 +264,65 @@ public class Electrical_Calculator2 {
       awgArea.setText(null);
     });
 
+    AddMisc.addActionListener((e) -> {
+      String w = typeArea.getText().trim();
+      String a = amountArea.getText().trim();
+      int a2 = Integer.parseInt(a);
+      con1.add_misc(w,a2);
+      typeArea.setText(null);
+      amountArea.setText(null);
+      awgArea.setText(null);
+    });
 
     Done.addActionListener((e) -> {
       con1.trade_size(output);
       frame.setVisible(false);
+      Con_frame(output);
     });
   }
 
-  public static void Line_frame(PrintStream output){
-    JFrame frame = set_frame();
+  public static void LineQ_frame(PrintStream output) {
+    JFrame frame = set_small_frame();
+    JButton CONBT = new JButton("YES");
+    JButton LINBT = new JButton("NO");
+    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    ECControlPanel.add(CONBT);
+    ECControlPanel.add(LINBT);
+    JPanel ECTextPanel = new JPanel();
+    ECTextPanel.setLayout(new BorderLayout());
+    ECTextPanel.add(ECControlPanel, BorderLayout.NORTH);
+
+    JTextArea infoTextArea = new JTextArea();
+    infoTextArea.setLineWrap(true);
+    infoTextArea.setWrapStyleWord(true);
+    infoTextArea.setText("Do you want to measure line loss?");
+    infoTextArea.setBackground(new Color(241,241,241));
+    infoTextArea.setEditable(false);
+    infoTextArea.setMargin(new Insets(5, 5, 5,5));
+    JPanel infoPanel = new JPanel(new BorderLayout());
+    infoPanel.add(infoTextArea, BorderLayout.CENTER);
+
+    JPanel mainPanel = new JPanel(new BorderLayout());
+    mainPanel.add(infoPanel, BorderLayout.NORTH);
+    mainPanel.add(ECTextPanel, BorderLayout.CENTER);
+    frame.add(mainPanel, BorderLayout.CENTER);
+
+    CONBT.addActionListener((e) -> {
+      output.println("LINE LOSS");
+      output.println();
+      Line_frame(output);
+      frame.setVisible(false);
+    });
+    LINBT.addActionListener((e) -> {
+      System.exit(0);
+    });
+
+  }
+
+  public static void Line_frame(PrintStream output) {
+
+    JFrame frame = set_small_frame();
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
@@ -271,6 +336,7 @@ public class Electrical_Calculator2 {
     JLabel exLabel = new JLabel("Put the total voltage of the brach below.");
     exLabel.setHorizontalAlignment(SwingConstants.CENTER);
     JButton next = new JButton("NEXT");
+    JButton Done = new JButton("DONE");
     JPanel Panel = new JPanel();
     Panel.setLayout(new BorderLayout());
     Panel.add(nameLabel, BorderLayout.NORTH);
@@ -287,6 +353,9 @@ public class Electrical_Calculator2 {
     txtPanel.setLayout(new BorderLayout());
     txtPanel.add(ECTextPanel, BorderLayout.NORTH);
     txtPanel.add(exTextPanel, BorderLayout.CENTER);
+    JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    control.add(next);
+    control.add(Done);
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
@@ -299,7 +368,7 @@ public class Electrical_Calculator2 {
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(infoPanel, BorderLayout.NORTH);
     mainPanel.add(txtPanel, BorderLayout.CENTER);
-    mainPanel.add(next, BorderLayout.SOUTH);
+    mainPanel.add(control, BorderLayout.SOUTH);
     frame.add(mainPanel, BorderLayout.CENTER);
 
     next.addActionListener((e) -> {
@@ -307,12 +376,17 @@ public class Electrical_Calculator2 {
       String vt = exArea.getText().trim();
       int volt = Integer.parseInt(vt);
       branch_frame(output,name,volt);
+      frame.setVisible(false);
+    });
+
+    Done.addActionListener((e) -> {
+      System.exit(0);
     });
 
   }
 
-  public static void branch_frame(PrintStream output, String name, int volt){
-    JFrame frame = set_frame();
+  public static void branch_frame(PrintStream output, String name, int volt) {
+    JFrame frame = set_small_frame();
     Line_Loss bran = new Line_Loss(volt);
     JButton Add = new JButton("ADD");
     JButton Done = new JButton("DONE");
@@ -353,7 +427,7 @@ public class Electrical_Calculator2 {
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load ofthis segment below.");
+    infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load of this segment below.");
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -375,11 +449,47 @@ public class Electrical_Calculator2 {
     });
 
     Done.addActionListener((e) -> {
-      output.println("Branch " + name + " has a total voltage of " + volt + "V has " + bran.size() + " segments.");
+      output.println("    Branch " + name + " has a total voltage of " + volt + "V has " + bran.size() + " segments.");
       output.println();
       bran.loss_percentages(output);
       output.println();
       frame.setVisible(false);
     });
+  }
+
+  public static JFrame set_small_frame() {
+    JFrame frame = new JFrame();
+    BufferedImage img = null;
+    try {
+      img = ImageIO.read(new File("LOGO ONLY PNG.png"));
+    } catch (IOException e) {
+    }
+    frame.setTitle("Electrical Calculator by Trevor Morrow");
+    frame.setLayout(new BorderLayout());
+    frame.setSize(new Dimension(800, 250));
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setLocationRelativeTo(null);
+    frame.setResizable(false);
+    frame.setIconImage(img);
+    frame.setVisible(true);
+    return frame;
+  }
+
+  public static JFrame set_large_frame() {
+    JFrame frame = new JFrame();
+    frame.setTitle("Electrical Calculator by Trevor Morrow");
+    frame.setLayout(new BorderLayout());
+    frame.setSize(new Dimension(800, 650));
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setLocationRelativeTo(null);
+    frame.setResizable(false);
+    frame.setVisible(true);
+    return frame;
+  }
+
+  public static String get_date() {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    LocalDateTime now = LocalDateTime.now();
+    return dtf.format(now);
   }
 }

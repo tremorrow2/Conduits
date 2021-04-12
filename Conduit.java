@@ -17,8 +17,9 @@ public class Conduit {
     LinkedHashMap<String, Double> wires;
     Map<Integer, LinkedHashMap<String,Double>> multicables;
     Map<Integer, Double> fiberoptic;
-    Map<String, Double> cs;
+    Map<String, Double> misc;
     Map<Integer,Map<String,Double>> trades;
+
 
     //creates an empty conduit and creates the maps for the wires, multicables, fiberoptics, circuit cables and trade sizes
     public Conduit() {
@@ -31,6 +32,7 @@ public class Conduit {
       create_wires();
       create_fiberoptic();
       create_multicables();
+      create_misc();
       create_trades();
     }
 
@@ -80,6 +82,13 @@ public class Conduit {
       area += total_area;
     }
 
+    public void add_misc(String type, int amount) {
+      double misc_area = 0;
+      double total_area = 0;
+      misc_area = misc.get(type);
+      total_area = misc_area * amount;
+      area += total_area;
+    }
 
     //Adds miscellaneous area to area of conduit
     public void add(Double dub) {
@@ -184,6 +193,7 @@ public class Conduit {
       multicables12.put("20",.748151);
       multicables12.put("21",.748151);
       multicables12.put("25",.916088);
+
       multicables14.put("2",.091327);
       multicables14.put("3",.101223);
       multicables14.put("4",.120072);
@@ -202,9 +212,13 @@ public class Conduit {
       multicables14.put("21",.476612);
       multicables14.put("26",.672006);
       multicables14.put("2cs",.09);
+
       multicables18.put("4cs",.06);
+
       multicables19.put("6pcc",.32);
+
       multicables20.put("3cs",.07);
+
       multicables.put(12,multicables12);
       multicables.put(14,multicables14);
       multicables.put(18,multicables18);
@@ -238,6 +252,12 @@ public class Conduit {
       fiberoptic.put(432,.547135);
     }
 
+    public void create_misc(){
+      misc = new TreeMap<String,Double>();
+
+      misc.put("orion",.132);
+      misc.put("pull",.023);
+    }
 
     //Creates map for trades and their areas divided by their schedule
     public void create_trades() {
@@ -300,8 +320,8 @@ public class Conduit {
     }
 
     //Prints allowed circuit cables
-    public String print_cs(){
-      Set<String> cs2 = cs.keySet();
+    public String print_misc(){
+      Set<String> cs2 = misc.keySet();
       return cs2.toString();
     }
 
@@ -321,8 +341,8 @@ public class Conduit {
     }
 
     //Determines if given circuit cable is listed in map
-    public boolean contain_cs(String s){
-      return cs.containsKey(s);
+    public boolean contain_misc(String s){
+      return misc.containsKey(s);
     }
 
     //Determines if given trade size is listed in map
