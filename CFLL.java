@@ -25,8 +25,15 @@ public class CFLL{
       Intro();
     });
   }
+
   public static void Intro() {
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,275);
+    JTextArea pathArea = new JTextArea(2,20);
+    pathArea.setLineWrap(true);
+    pathArea.setWrapStyleWord(true);
+    pathArea.setMargin(new Insets(5, 5, 5,5));
+    JLabel pathLabel = new JLabel("Give the pathway for your file.");
+    pathLabel.setHorizontalAlignment(SwingConstants.CENTER);
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
@@ -40,6 +47,14 @@ public class CFLL{
     ECTextPanel.setLayout(new BorderLayout());
     ECTextPanel.add(nameLabel, BorderLayout.NORTH);
     ECTextPanel.add(nameArea, BorderLayout.CENTER);
+    JPanel PathTextPanel = new JPanel();
+    PathTextPanel.setLayout(new BorderLayout());
+    PathTextPanel.add(pathLabel, BorderLayout.NORTH);
+    PathTextPanel.add(pathArea, BorderLayout.CENTER);
+    JPanel TextPanel = new JPanel();
+    TextPanel.setLayout(new BorderLayout());
+    TextPanel.add(PathTextPanel, BorderLayout.NORTH);
+    TextPanel.add(ECTextPanel, BorderLayout.CENTER);
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
@@ -51,13 +66,14 @@ public class CFLL{
     infoPanel.add(infoTextArea, BorderLayout.CENTER);
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(ECTextPanel, BorderLayout.CENTER);
+    mainPanel.add(TextPanel, BorderLayout.CENTER);
     mainPanel.add(ECControlPanel, BorderLayout.SOUTH);
     frame.add(mainPanel, BorderLayout.CENTER);
 
     SUB.addActionListener((e) -> {
       String name = nameArea.getText().trim();
-      String file = name + ".txt";
+      String path = pathArea.getText().trim();
+      String file = path + name + ".txt";
       try
       {
         PrintStream  output = new PrintStream(new File(file));
@@ -77,7 +93,7 @@ public class CFLL{
     output.println("                                                            " + date);
     output.println("                            " + name + " Calculations");
     output.println();
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,150);
     JButton CONBT = new JButton("YES");
     JButton LINBT = new JButton("NO");
     JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -117,7 +133,7 @@ public class CFLL{
   }
 
   public static void Con_frame(PrintStream output) {
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,275);
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
@@ -205,7 +221,7 @@ public class CFLL{
   }
 
   public static void Run_frame(String size, PrintStream output, String name, String age, int sched) {
-    JFrame frame = set_large_frame();
+    JFrame frame = set_small_frame(800,550);
     Conduit con1 = new Conduit();
 
     if(age.equalsIgnoreCase("new")) {
@@ -262,7 +278,7 @@ public class CFLL{
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\nWires:\n" + con1.print_wires() + "\nSignal Cables:\n" + con1.print_multicables() + "\nFiber Optics:\n" + con1.print_fiberoptics() + "\nMiscellaneous:\n" + con1.print_misc());
+    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nWires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -325,7 +341,7 @@ public class CFLL{
   }
 
   public static void LineQ_frame(PrintStream output) {
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,150);
     JButton CONBT = new JButton("YES");
     JButton LINBT = new JButton("NO");
     JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -365,7 +381,7 @@ public class CFLL{
 
   public static void Line_frame(PrintStream output) {
 
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,275);
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
@@ -429,7 +445,7 @@ public class CFLL{
   }
 
   public static void branch_frame(PrintStream output, String name, int volt) {
-    JFrame frame = set_small_frame();
+    JFrame frame = set_small_frame(800,300);
     Line_Loss bran = new Line_Loss(volt);
     JButton Add = new JButton("ADD");
     JButton Done = new JButton("DONE");
@@ -502,7 +518,7 @@ public class CFLL{
     });
   }
 
-  public static JFrame set_small_frame() {
+  public static JFrame set_small_frame(int x, int y) {
     JFrame frame = new JFrame();
     BufferedImage img = null;
     try {
@@ -513,30 +529,11 @@ public class CFLL{
     frame.setLayout(new BorderLayout());
     JLabel rules = new JLabel(" Unlicensed use prohibited, contact admin@phtraffic.com for licensing");
     frame.add(rules,BorderLayout.PAGE_END);
-    frame.setSize(new Dimension(800, 350));
+    frame.setSize(new Dimension(x, y));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setLocationRelativeTo(null);
     frame.setResizable(false);
     frame.setIconImage(img);
-    frame.setVisible(true);
-    return frame;
-  }
-
-  public static JFrame set_large_frame() {
-    JFrame frame = new JFrame();
-    BufferedImage img = null;
-    try {
-      img = ImageIO.read(new File("LOGO ONLY PNG.png"));
-    } catch (IOException e) {
-    }
-    frame.setTitle("PH Consulting Conduit Fill and Line Loss Calculator (Proprietary PH Consulting use only)");
-    frame.setLayout(new BorderLayout());
-    JLabel rules = new JLabel(" Unlicensed use prohibited, contact admin@phtraffic.com for licensing");
-    frame.add(rules,BorderLayout.PAGE_END);
-    frame.setSize(new Dimension(800, 650));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setLocationRelativeTo(null);
-    frame.setResizable(false);
     frame.setVisible(true);
     return frame;
   }
