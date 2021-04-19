@@ -10,100 +10,71 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterJob;
 
 
+/*
+  The CFLL or Conduit Fill and Line Loss calculator was developed to help in calculations for Traffic Engineering projects.
+  The Conduit Fill section allows the user to calculate the percentage filled for a new or exisitng Conduit and if the conduit is new it
+  will give the minimum sized conduit allowed for the given area, this is purely for user to know the most cost effective size they can have.
+  The Line Loss sections allows the user to calculate percentage loss for indvidual branches.
+  This tool also prints out all the information calculated into a text file that can be used in future reports or designs and makes all the
+  information easily accessible.
+*/
 
 public class CFLL{
+  public static File file;
+  //Main Function sets the initial UI look and starts the program
   public static void main(String[] args) throws FileNotFoundException {
-    try {
-        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+    setNimbus();
     PrintStream output;
     SwingUtilities.invokeLater(() -> {
       Intro();
     });
   }
 
+  //Prompts the user to create their new file
   public static void Intro() {
-    JFrame frame = set_small_frame(800,275);
-    JTextArea pathArea = new JTextArea(2,20);
-    pathArea.setLineWrap(true);
-    pathArea.setWrapStyleWord(true);
-    pathArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel pathLabel = new JLabel("Give the pathway for your file.");
-    pathLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea nameArea = new JTextArea(2,20);
-    nameArea.setLineWrap(true);
-    nameArea.setWrapStyleWord(true);
-    nameArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel nameLabel = new JLabel("Name your file.");
-    nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JButton SUB = new JButton("SUBMIT");
-    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    ECControlPanel.add(SUB);
-    JPanel ECTextPanel = new JPanel();
-    ECTextPanel.setLayout(new BorderLayout());
-    ECTextPanel.add(nameLabel, BorderLayout.NORTH);
-    ECTextPanel.add(nameArea, BorderLayout.CENTER);
-    JPanel PathTextPanel = new JPanel();
-    PathTextPanel.setLayout(new BorderLayout());
-    PathTextPanel.add(pathLabel, BorderLayout.NORTH);
-    PathTextPanel.add(pathArea, BorderLayout.CENTER);
-    JPanel TextPanel = new JPanel();
-    TextPanel.setLayout(new BorderLayout());
-    TextPanel.add(PathTextPanel, BorderLayout.NORTH);
-    TextPanel.add(ECTextPanel, BorderLayout.CENTER);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the name of your file below.");
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
+    JFrame frame = set_small_frame(800,100);
+    JButton SUB = new JButton("Create your file");
     JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(TextPanel, BorderLayout.CENTER);
-    mainPanel.add(ECControlPanel, BorderLayout.SOUTH);
+    mainPanel.add(SUB, BorderLayout.NORTH);
     frame.add(mainPanel, BorderLayout.CENTER);
-
     SUB.addActionListener((e) -> {
-      String name = nameArea.getText().trim();
-      String path = pathArea.getText().trim();
-      String file = path + name + ".txt";
+      get_file();
+      String name = file.getName();
+      name = name.substring(0,name.length()-4);
       try
       {
-        PrintStream  output = new PrintStream(new File(file));
+        PrintStream  output = new PrintStream(file);
         FirstQ(name,output);
         frame.setVisible(false);
       }
       catch(FileNotFoundException b)
-      {}
-
-
-
+      {
+        b.printStackTrace();
+      }
     });
   }
 
+  //Ask the user if they want to calculate conduit sizing
   public static void FirstQ(String name,PrintStream output) {
+
     String date = get_date();
     output.println("                                                            " + date);
     output.println("                            " + name + " Calculations");
     output.println();
     JFrame frame = set_small_frame(800,150);
-    JButton CONBT = new JButton("YES");
-    JButton LINBT = new JButton("NO");
-    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    ECControlPanel.add(CONBT);
-    ECControlPanel.add(LINBT);
+    JButton YESBT = new JButton("YES");
+    JButton NOBT = new JButton("NO");
+    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    ECControlPanel.add(YESBT);
+    ECControlPanel.add(NOBT);
     JPanel ECTextPanel = new JPanel();
     ECTextPanel.setLayout(new BorderLayout());
     ECTextPanel.add(ECControlPanel, BorderLayout.NORTH);
-
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
@@ -113,45 +84,43 @@ public class CFLL{
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
     JPanel infoPanel = new JPanel(new BorderLayout());
     infoPanel.add(infoTextArea, BorderLayout.CENTER);
-
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(infoPanel, BorderLayout.NORTH);
     mainPanel.add(ECTextPanel, BorderLayout.CENTER);
     frame.add(mainPanel, BorderLayout.CENTER);
 
-    CONBT.addActionListener((e) -> {
+    YESBT.addActionListener((e) -> {
       output.println("CONDUIT SIZING");
       output.println();
+      output.println("Run       New/Exis  Sched     Size(in)  Area(in2) Fill(%)   Min(in)   MFill(%)");
+
       Con_frame(output);
       frame.setVisible(false);
     });
-    LINBT.addActionListener((e) -> {
+
+    NOBT.addActionListener((e) -> {
       LineQ_frame(output);
       frame.setVisible(false);
     });
 
   }
 
+  //Has the user name the run and select the type of run it is.
   public static void Con_frame(PrintStream output) {
-    JFrame frame = set_small_frame(800,275);
+
+    JFrame frame = set_small_frame(800,200);
     JTextArea nameArea = new JTextArea(2,20);
     nameArea.setLineWrap(true);
     nameArea.setWrapStyleWord(true);
     nameArea.setMargin(new Insets(5, 5, 5,5));
     JLabel nameLabel = new JLabel("Give your run name below.");
     nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea exArea = new JTextArea(2,20);
-    exArea.setLineWrap(true);
-    exArea.setWrapStyleWord(true);
-    exArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel exLabel = new JLabel("If existing put the trade size below.");
-    exLabel.setHorizontalAlignment(SwingConstants.CENTER);
     JButton NBT40 = new JButton("New 40");
     JButton EBT40 = new JButton("Existing 40");
     JButton NBT80 = new JButton("New 80");
     JButton EBT80 = new JButton("Existing 80");
     JButton Done = new JButton("Done");
-    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     ECControlPanel.add(NBT40);
     ECControlPanel.add(NBT80);
     ECControlPanel.add(EBT40);
@@ -161,18 +130,10 @@ public class CFLL{
     ECTextPanel.setLayout(new BorderLayout());
     ECTextPanel.add(nameLabel, BorderLayout.NORTH);
     ECTextPanel.add(nameArea, BorderLayout.CENTER);
-    JPanel exTextPanel = new JPanel();
-    exTextPanel.setLayout(new BorderLayout());
-    exTextPanel.add(exLabel, BorderLayout.NORTH);
-    exTextPanel.add(exArea, BorderLayout.CENTER);
-    JPanel txtPanel = new JPanel();
-    txtPanel.setLayout(new BorderLayout());
-    txtPanel.add(ECTextPanel, BorderLayout.NORTH);
-    txtPanel.add(exTextPanel, BorderLayout.CENTER);
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the name of the run in the box below and if it is exisiting give the exisiting size in the box below.\n Then click the button for the type of conduit you want.");
+    infoTextArea.setText("Give the name of the run in the box below then select the type of trade it is.");
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -180,37 +141,31 @@ public class CFLL{
     infoPanel.add(infoTextArea, BorderLayout.CENTER);
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(txtPanel, BorderLayout.CENTER);
+    mainPanel.add(ECTextPanel, BorderLayout.CENTER);
     mainPanel.add(ECControlPanel, BorderLayout.SOUTH);
     frame.add(mainPanel, BorderLayout.CENTER);
 
     NBT40.addActionListener((e) -> {
       String name = nameArea.getText().trim();
-
-      Run_frame(null,output,name,"New",40);
+      Size_frame(output,name,"New",40);
       frame.setVisible(false);
     });
 
     EBT40.addActionListener((e) -> {
       String name = nameArea.getText().trim();
-      String size = exArea.getText().trim();
-
-      Run_frame(size,output,name,"Existing",40);
+      Size_frame(output,name,"Existing",40);
       frame.setVisible(false);
     });
 
     NBT80.addActionListener((e) -> {
       String name = nameArea.getText().trim();
-
-      Run_frame(null,output,name,"New",80);
+      Size_frame(output,name,"New",80);
       frame.setVisible(false);
     });
 
     EBT80.addActionListener((e) -> {
       String name = nameArea.getText().trim();
-      String size = exArea.getText().trim();
-
-      Run_frame(size,output,name,"Existing",80);
+      Size_frame(output,name,"Existing",80);
       frame.setVisible(false);
     });
 
@@ -220,16 +175,97 @@ public class CFLL{
     });
   }
 
+  //Prompts the user to select a desired size conduit for calculations
+  public static void Size_frame(PrintStream output, String name, String age, int sched) {
+
+    JFrame frame = set_small_frame(800,150);
+    JButton One = new JButton("1");
+    JButton OneQuat = new JButton("1 1/4");
+    JButton OneHalf = new JButton("1 1/2");
+    JButton Two = new JButton("2");
+    JButton TwoHalf = new JButton("2 1/2");
+    JButton Three = new JButton("3");
+    JButton ThreeHalf = new JButton("3 1/2");
+    JButton Four = new JButton("4");
+    JPanel ControlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    ControlPanel.add(One);
+    ControlPanel.add(OneQuat);
+    ControlPanel.add(OneHalf);
+    ControlPanel.add(Two);
+    ControlPanel.add(TwoHalf);
+    ControlPanel.add(Three);
+    ControlPanel.add(ThreeHalf);
+    ControlPanel.add(Four);
+    JTextArea infoTextArea = new JTextArea();
+    infoTextArea.setLineWrap(true);
+    infoTextArea.setWrapStyleWord(true);
+    infoTextArea.setText("Pick your desired Trade Size");
+    infoTextArea.setBackground(new Color(241,241,241));
+    infoTextArea.setEditable(false);
+    infoTextArea.setMargin(new Insets(5, 5, 5,5));
+    JPanel infoPanel = new JPanel(new BorderLayout());
+    infoPanel.add(infoTextArea, BorderLayout.CENTER);
+
+    JPanel mainPanel = new JPanel(new BorderLayout());
+    mainPanel.add(infoPanel, BorderLayout.NORTH);
+    mainPanel.add(ControlPanel, BorderLayout.CENTER);
+    frame.add(mainPanel, BorderLayout.CENTER);
+
+    One.addActionListener((e) -> {
+      Run_frame("1",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    OneQuat.addActionListener((e) -> {
+      Run_frame("1 1/4",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    OneHalf.addActionListener((e) -> {
+      Run_frame("1 1/2",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    Two.addActionListener((e) -> {
+      Run_frame("2",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    TwoHalf.addActionListener((e) -> {
+      Run_frame("2 1/2",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    Three.addActionListener((e) -> {
+      Run_frame("3",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    ThreeHalf.addActionListener((e) -> {
+      Run_frame("3 1/2",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+    Four.addActionListener((e) -> {
+      Run_frame("4",output,name,age,sched);
+      frame.setVisible(false);
+    });
+
+
+  }
+
+  //This allows user to add components(Wire, Signal Cables, Fiber Optic, Miscellaneous) to the conduit
   public static void Run_frame(String size, PrintStream output, String name, String age, int sched) {
+
     JFrame frame = set_small_frame(800,550);
     Conduit con1 = new Conduit();
 
     if(age.equalsIgnoreCase("new")) {
-      con1.existence(sched,age);
-      output.println("    " + age + " run " + name + " of schedule " + sched + ".");
+      con1.existence(name,sched,size,age);
+      //output.println("    The run labled " + name + " is a proposed new run with a schedule of " + sched + " \n    and proposed size of " + size + " in.");
     } else {
-      output.println("    " + age + " run " + name + " of schedule " + sched + " and initial size is a " + size + ".");
-      con1.existence(sched, size, age);
+      //output.println("    The run labled " + name + " is an existing run with a schedule of " + sched + " \n     and its initial size is " + size + " in.");
+      con1.existence(name,sched, size, age);
     }
 
 
@@ -256,11 +292,11 @@ public class CFLL{
     awgArea.setMargin(new Insets(5, 5, 5,5));
     JLabel awgLabel = new JLabel("AWG");
     awgLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel amount = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel awg = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel amount = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel awg = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
     control.add(AddWire);
     control.add(AddMCable);
     control.add(AddFiberOptic);
@@ -278,7 +314,7 @@ public class CFLL{
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nWires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
+    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nElectrical Power Wires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
     infoTextArea.setBackground(new Color(241,241,241));
     infoTextArea.setEditable(false);
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
@@ -340,18 +376,19 @@ public class CFLL{
     });
   }
 
+  //Ask the user if they want to calculate Line Loss
   public static void LineQ_frame(PrintStream output) {
+
     JFrame frame = set_small_frame(800,150);
-    JButton CONBT = new JButton("YES");
-    JButton LINBT = new JButton("NO");
-    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    ECControlPanel.add(CONBT);
-    ECControlPanel.add(LINBT);
+    JButton YESBT = new JButton("YES");
+    JButton NOBT = new JButton("NO");
+    JPanel ECControlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel ConControl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    ECControlPanel.add(YESBT);
+    ECControlPanel.add(NOBT);
     JPanel ECTextPanel = new JPanel();
     ECTextPanel.setLayout(new BorderLayout());
     ECTextPanel.add(ECControlPanel, BorderLayout.NORTH);
-
     JTextArea infoTextArea = new JTextArea();
     infoTextArea.setLineWrap(true);
     infoTextArea.setWrapStyleWord(true);
@@ -361,25 +398,27 @@ public class CFLL{
     infoTextArea.setMargin(new Insets(5, 5, 5,5));
     JPanel infoPanel = new JPanel(new BorderLayout());
     infoPanel.add(infoTextArea, BorderLayout.CENTER);
-
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.add(infoPanel, BorderLayout.NORTH);
     mainPanel.add(ECTextPanel, BorderLayout.CENTER);
     frame.add(mainPanel, BorderLayout.CENTER);
 
-    CONBT.addActionListener((e) -> {
+    YESBT.addActionListener((e) -> {
       output.println("LINE LOSS");
       output.println();
-      Line_frame(output);
+      Branch_frame(output);
       frame.setVisible(false);
     });
-    LINBT.addActionListener((e) -> {
+
+    NOBT.addActionListener((e) -> {
+      openFile();
       System.exit(0);
     });
 
   }
 
-  public static void Line_frame(PrintStream output) {
+  //Prompts the user to give the name of the branch and the total voltage for this branch
+  public static void Branch_frame(PrintStream output) {
 
     JFrame frame = set_small_frame(800,275);
     JTextArea nameArea = new JTextArea(2,20);
@@ -412,7 +451,7 @@ public class CFLL{
     txtPanel.setLayout(new BorderLayout());
     txtPanel.add(ECTextPanel, BorderLayout.NORTH);
     txtPanel.add(exTextPanel, BorderLayout.CENTER);
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
     control.add(next);
     control.add(Done);
     JTextArea infoTextArea = new JTextArea();
@@ -434,21 +473,24 @@ public class CFLL{
       String name = nameArea.getText().trim();
       String vt = exArea.getText().trim();
       int volt = Integer.parseInt(vt);
-      branch_frame(output,name,volt);
+      Seg_frame(output,name,volt);
       frame.setVisible(false);
     });
 
     Done.addActionListener((e) -> {
+      openFile();
       System.exit(0);
     });
 
   }
 
-  public static void branch_frame(PrintStream output, String name, int volt) {
+  //Allows the user to add segments to the branch
+  public static void Seg_frame(PrintStream output, String name, int volt) {
+
     JFrame frame = set_small_frame(800,300);
     Line_Loss bran = new Line_Loss(volt);
     JButton Add = new JButton("ADD");
-    JButton Done = new JButton("DONE");
+    JButton Next = new JButton("DONE");
     JTextArea typeArea = new JTextArea(2,20);
     typeArea.setLineWrap(true);
     typeArea.setWrapStyleWord(true);
@@ -467,13 +509,13 @@ public class CFLL{
     ampArea.setMargin(new Insets(5, 5, 5,5));
     JLabel ampLabel = new JLabel("AMP LOAD");
     ampLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel length = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel amp = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel length = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel amp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
     control.add(Add);
-    control.add(Done);
+    control.add(Next);
     type.add(typeLabel, BorderLayout.NORTH);
     type.add(typeArea,BorderLayout.CENTER);
     length.add(lengthLabel, BorderLayout.NORTH);
@@ -509,15 +551,17 @@ public class CFLL{
       ampArea.setText(null);
     });
 
-    Done.addActionListener((e) -> {
+    Next.addActionListener((e) -> {
       output.println("    Branch " + name + " has a total voltage of " + volt + "V has " + bran.size() + " segments.");
       output.println();
       bran.loss_percentages(output);
       output.println();
+      Branch_frame(output);
       frame.setVisible(false);
     });
   }
 
+  //Sets the frame size and information
   public static JFrame set_small_frame(int x, int y) {
     JFrame frame = new JFrame();
     BufferedImage img = null;
@@ -538,9 +582,72 @@ public class CFLL{
     return frame;
   }
 
+  //Gets current date
   public static String get_date() {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
     return dtf.format(now);
   }
+
+  //Allows user to pick a save spot for their file
+  public static void get_file(){
+    setWindows();
+    PrintStream output;
+    JFileChooser chooser = new JFileChooser();
+		chooser.showSaveDialog(null);
+		file = chooser.getSelectedFile();
+    file = new File(file.getPath()+".txt");
+    setNimbus();
+  }
+
+  //Sets look of UI
+  public static void setNimbus() {
+    try {
+        UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+  }
+
+  //Sets look of UI
+  public static void setWindows() {
+    try {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+  }
+
+  public static void openFile() {
+    try
+    {
+      //constructor of file class having file as argument
+
+      if(!Desktop.isDesktopSupported())//check if Desktop is supported by Platform or not
+      {
+        System.out.println("not supported");
+        return;
+      }
+      Desktop desktop = Desktop.getDesktop();
+      if(file.exists())
+      //setupPrinter();        //checks file exists or not
+      desktop.open(file);              //opens the specified file
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
+    }
+  }
+  /*
+  public static void setupPrinter() throws Exception {
+    PrinterJob pjob = PrinterJob.getPrinterJob();
+    PageFormat pf = pjob.defaultPage();
+    pjob.setPrintable(null, pf);
+    pjob.printDialog();
+    /*
+    if (pjob.printDialog()) {
+      pjob.print();
+    }
+
+  }*/
 }

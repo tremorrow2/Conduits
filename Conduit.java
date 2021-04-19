@@ -12,7 +12,8 @@ public class Conduit {
     String condition;
     String size;
     int sched;
-    double allowed_area;
+    String name;
+    //double allowed_area;
     double exist_area;
     LinkedHashMap<String, Double> wires;
     Map<Integer, LinkedHashMap<String,Double>> multicables;
@@ -26,7 +27,7 @@ public class Conduit {
       area = 0.00;
       condition = "";
       size = "";
-      allowed_area = 0.0;
+      name = "";
       exist_area = 0.0;
       sched = 0;
       create_wires();
@@ -37,19 +38,14 @@ public class Conduit {
     }
 
     //For existing conduits sets the condition to "existing", sched to neccessry schedule, and fines the allowed area for given trade size
-    public void existence(int sd, String sz, String con) {
+    public void existence(String nm, int sd, String sz, String con) {
       condition = con;
       size = sz;
       sched = sd;
       exist_area = trades.get(sched).get(size);
-      allowed_area = exist_area * .40;
+      name = nm;
+      //allowed_area = exist_area * .40;
 
-    }
-
-    //For new conduits sets the condition to "new", and sched to neccessary schedule
-    public void existence(int sd, String con) {
-      condition = con;
-      sched = sd;
     }
 
     //Adds total wire area to area of conduit
@@ -105,19 +101,26 @@ public class Conduit {
       double temp_filled2 = 0;
       String trade = "";
       area+=ground_wire;
+      //area = Math.round(area * 100.00)/100.00;
       if(condition.equalsIgnoreCase("existing")) {
         perc = .40;
-        temp_filled = (area/exist_area);
-        double scale = Math.pow(10,4);
-        filled = Math.round(temp_filled * 100.00);
+        Map<String, Double> temp = trades.get(sched);
+        Set<String> temp2 = temp.keySet();
+        Iterator<String> look = temp2.iterator();
+        trade = look.next();
+        trade_area = temp.get(trade);
+        temp_filled2 = (area/exist_area)*100;
+        double scale = Math.pow(10,2);
+        filled2 = Math.round(temp_filled2 * 100.0)/100.0;
         area = Math.round(area * scale)/scale;
-        if(temp_filled >= perc) {
-            System.out.println("This " + size + " conduit is already filled to capacity with a an area of " + area + " in^2, and has " + filled + "% filled.");
-            output.println("    This " + size + " conduit is already filled to capacity with a an area of " + area + " in^2,\n    and has " + filled + "% filled.");
-        } else {
-            System.out.println("This " + size + " conduit is not filled to capacity with a an area of " + area + " in^2, and perecent of " + filled + "% filled.");
-            output.println("    This " + size + " conduit is not filled to capacity with a an area of " + area + " in^2,\n    and has " + filled + "% filled.");
-        }
+        print_value(output,name);
+        print_value(output,condition);
+        print_value(output,sched);
+        print_value(output,size);
+        print_value(output,area);
+        print_value(output,filled2);
+        print_value(output,"-");
+        output.print("-");
       } else {
         perc = 0.26;
         Map<String, Double> temp = trades.get(sched);
@@ -125,25 +128,24 @@ public class Conduit {
         Iterator<String> look = temp2.iterator();
         trade = look.next();
         trade_area = temp.get(trade);
-        if(area < (trades.get(sched).get("6"))*perc) {
-          while(area > (trade_area * perc)) {
-            trade = look.next();
-            trade_area = temp.get(trade);
-          }
-          temp_filled = (area/trade_area);
-          double scale = Math.pow(10,4);
-          filled = Math.round(temp_filled * 100.00);
-          area = Math.round(area * scale)/scale;
-          System.out.println("The size of your conduit is a " + trade + ".");
-          System.out.println("The combined area of the wires is " + area + " in^2.");
-          System.out.println("The percentage filled is " + filled + "%.");
-          output.println("    The size of your conduit is a " + trade + ".");
-          output.println("    The combined area of the wires is " + area + " in^2.");
-          output.println("    The percentage filled is " + filled + "%.");
-        } else {
-          output.println("    The calculated area exceeds any alllowed conduit fill under WSDOT regulations, please consider using multiple conduits.");
-          System.out.println("The calculated area exceeds any alllowed conduit fill under WSDOT regulations, please consider using multiple conduits.");
+        temp_filled2 = (area/exist_area)*100;
+        double scale = Math.pow(10,2);
+        filled2 = Math.round(temp_filled2 * 100.0)/100.0;
+        area = Math.round(area * scale)/scale;
+        while(area > (trade_area * perc)) {
+          trade = look.next();
+          trade_area = temp.get(trade);
         }
+        temp_filled = (area/trade_area)*100;
+        filled = Math.round(temp_filled * 100.0)/100.0;
+        print_value(output,name);
+        print_value(output,condition);
+        print_value(output,sched);
+        print_value(output,size);
+        print_value(output,area);
+        print_value(output,filled2);
+        print_value(output,trade);
+        output.print(filled);
       }
       System.out.println();
       output.println();
@@ -180,37 +182,37 @@ public class Conduit {
       //Map<String, Double> multicablesmisc = new TreeMap<String,Double>();
       multicables = new TreeMap<Integer,LinkedHashMap<String,Double>>();
 
-      multicables12.put("2",.123786);
-      multicables12.put("3",.138544);
-      multicables12.put("4",.165468);
-      multicables12.put("5",.198713);
-      multicables12.put("7",.263298);
-      multicables12.put("9",.359971);
-      multicables12.put("10",.369605);
-      multicables12.put("12",.445328);
-      multicables12.put("16",.602696);
-      multicables12.put("19",.677831);
-      multicables12.put("20",.748151);
-      multicables12.put("21",.748151);
-      multicables12.put("25",.916088);
+      multicables12.put("2c",.123786);
+      multicables12.put("3c",.138544);
+      multicables12.put("4c",.165468);
+      multicables12.put("5c",.198713);
+      multicables12.put("7c",.263298);
+      multicables12.put("9c",.359971);
+      multicables12.put("10c",.369605);
+      multicables12.put("12c",.445328);
+      multicables12.put("16c",.602696);
+      multicables12.put("19c",.677831);
+      multicables12.put("20c",.748151);
+      multicables12.put("21c",.748151);
+      multicables12.put("25c",.916088);
 
-      multicables14.put("2",.091327);
-      multicables14.put("3",.101223);
-      multicables14.put("4",.120072);
-      multicables14.put("5",.14522);
-      multicables14.put("6",.169093);
-      multicables14.put("7",.169093);
-      multicables14.put("8",.201886);
-      multicables14.put("9",.256072);
-      multicables14.put("10",.275254);
-      multicables14.put("12",.31769);
-      multicables14.put("14",.350464);
-      multicables14.put("15",.389256);
-      multicables14.put("16",.389256);
-      multicables14.put("19",.431247);
-      multicables14.put("20",.476612);
-      multicables14.put("21",.476612);
-      multicables14.put("26",.672006);
+      multicables14.put("2c",.091327);
+      multicables14.put("3c",.101223);
+      multicables14.put("4c",.120072);
+      multicables14.put("5c",.14522);
+      multicables14.put("6c",.169093);
+      multicables14.put("7c",.169093);
+      multicables14.put("8c",.201886);
+      multicables14.put("9c",.256072);
+      multicables14.put("10c",.275254);
+      multicables14.put("12c",.31769);
+      multicables14.put("14c",.350464);
+      multicables14.put("15c",.389256);
+      multicables14.put("16c",.389256);
+      multicables14.put("19c",.431247);
+      multicables14.put("20c",.476612);
+      multicables14.put("21c",.476612);
+      multicables14.put("26c",.672006);
       multicables14.put("2cs",.09);
 
       multicables18.put("4cs",.06);
@@ -257,6 +259,7 @@ public class Conduit {
 
       misc.put("orion",.132);
       misc.put("pull",.023);
+      misc.put("RG59/5c",.363);
     }
 
     //Creates map for trades and their areas divided by their schedule
@@ -348,5 +351,28 @@ public class Conduit {
     //Determines if given trade size is listed in map
     public boolean contain_trade(String s){
       return trades.get(40).containsKey(s);
+    }
+
+    private static void print_value(PrintStream output, String wd) {
+      output.print(wd);
+      for(int i = 0; i < 10 - wd.length(); i++) {
+        output.print(" ");
+      }
+    }
+
+    private static void print_value(PrintStream output, int wd) {
+      output.print(wd);
+      String w = String.valueOf(wd);
+      for(int i = 0; i < 10 - w.length(); i++) {
+        output.print(" ");
+      }
+    }
+
+    private static void print_value(PrintStream output, double wd) {
+      output.print(wd);
+      String w = String.valueOf(wd);
+      for(int i = 0; i < 10 - w.length(); i++) {
+        output.print(" ");
+      }
     }
 }
