@@ -5,23 +5,31 @@ public class Line_Loss {
 
   int tot_volt;
   int segments;
+  int ft;
   Map<String, Double> wires;
   Map<Integer, Double> branch;
+  Map<Integer,Integer> length;
+  Map<Integer,String> type;
   public Line_Loss(int voltage) {
 
     tot_volt = voltage;
     segments = 0;
+    ft = 0;
     branch = new TreeMap<Integer,Double>();
+    length = new TreeMap<Integer,Integer>();
+    type = new TreeMap<Integer,String>();
     create_wires();
   }
 
   public void new_line(int len, double load, String wire) {
     double line_loss = 0.0;
     double resistance = wires.get(wire);
+    ft += len;
     segments++;
     line_loss = resistance * load * len * 2;
     branch.put(segments,line_loss);
-
+    length.put(segments,len);
+    type.put(segments,wire);
   }
 
   public void loss_percentages(PrintStream output) {
@@ -35,27 +43,23 @@ public class Line_Loss {
     Set<Integer> temp = branch.keySet();
     Iterator<Integer> look = temp.iterator();
     line = look.next();
-    while(look.hasNext()) {
-      loss = branch.get(line);
+    for(int i = 1; i < segments + 1; i++) {
+      loss = branch.get(i);
       ln = Math.round(loss*100.0)/100.0;
       percent = (1-((tot_volt-loss)/tot_volt))*100;
       perc = Math.round(percent*100.0)/100.0;
       tot_percentage += percent;
       tot_perc = Math.round(tot_percentage*1000.0)/1000.0;
-      System.out.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cumulative drop percentage of " + tot_perc + "%.");
-      output.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "%\n    and a cumulative drop percentage of " + tot_perc + "%.");
-      line = look.next();
+      print_value(output,i);
+      print_value(output,type.get(i));
+      print_value(output,length.get(i));
+      print_value(output,ln);
+      print_value(output,perc);
+      print_value(output,tot_perc);
+      output.println();
+
     }
-    loss = branch.get(line);
-    ln = Math.round(loss*100.0)/100.0;
-    percent = (1-((tot_volt-loss)/tot_volt))*100;
-    perc = Math.round(percent*100.0)/100.0;
-    tot_percentage += percent;
-    tot_perc = Math.round(tot_percentage*1000.0)/1000.0;
-    System.out.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cumulative drop percentage of " + tot_perc + "%.");
-    output.println("    Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "%\n    and a cumulative drop percentage of " + tot_perc + "%.");
-    System.out.println("    The total percentage loss for this branch is " + tot_perc + "%.");
-    output.println("    The total percentage loss for this branch is " + tot_perc + "%.");
+    output.println("Segments:" + this.size() + "     Total Length:" + ft + "ft     Total Percentage:" + tot_perc + "%");
   }
 
   //Creates map for individual wire and their sizes
@@ -93,24 +97,27 @@ public class Line_Loss {
     return segments;
   }
 
-  /*
-  public double print_segs(int line,double tot, PrintStream output) {
-   double tot_percentage = 0.00;
-   double percent = 0.00;
+  private static void print_value(PrintStream output, String wd) {
+    output.print(wd);
+    for(int i = 0; i < 10 - wd.length(); i++) {
+      output.print(" ");
+    }
+  }
 
-   String perc = "";
-   String ln = "";
-   String tot_perc = "";
-   loss = branch.get(line);
-   ln = String.format("%.2g%n",loss);
-   percent = (1-((tot_volt-loss)/tot_volt))*100;
-   perc = String.format("%.2g%n",percent);
-   tot_percentage += percent;
-   tot_perc = String.format("%.2g%n",tot_percentage);
-   System.out.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-   output.println("Segment #" + line + " has a line loss of " + ln + " for a loss percentage of " + perc + "% and a cummalative drop percentage of " + tot_perc + "%.");
-   return tot_percentage;
+  private static void print_value(PrintStream output, int wd) {
+    output.print(wd);
+    String w = String.valueOf(wd);
+    for(int i = 0; i < 10 - w.length(); i++) {
+      output.print(" ");
+    }
+  }
 
-  }*/
+  private static void print_value(PrintStream output, double wd) {
+    output.print(wd);
+    String w = String.valueOf(wd);
+    for(int i = 0; i < 10 - w.length(); i++) {
+      output.print(" ");
+    }
+  }
 
 }
