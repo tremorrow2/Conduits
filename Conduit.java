@@ -31,7 +31,7 @@ public class Conduit {
       name = "";
       exist_area = 0.0;
       sched = 0;
-      scan = new Scanner(new File("val.txt"));
+      scan = new Scanner(new File("catalog.txt"));
       create_wires();
       create_multicables();
       create_fiberoptic();

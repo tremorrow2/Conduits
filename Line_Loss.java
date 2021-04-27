@@ -10,7 +10,9 @@ public class Line_Loss {
   Map<Integer, Double> branch;
   Map<Integer,Integer> length;
   Map<Integer,String> type;
-  public Line_Loss(int voltage) {
+  Scanner scan;
+
+  public Line_Loss(int voltage) throws FileNotFoundException {
 
     tot_volt = voltage;
     segments = 0;
@@ -18,9 +20,11 @@ public class Line_Loss {
     branch = new TreeMap<Integer,Double>();
     length = new TreeMap<Integer,Integer>();
     type = new TreeMap<Integer,String>();
+    scan = new Scanner(new File("catalog2.txt"));
     create_wires();
   }
 
+  //Creates the new line with its length and voltage loss
   public void new_line(int len, double load, String wire) {
     double line_loss = 0.0;
     double resistance = wires.get(wire);
@@ -32,6 +36,7 @@ public class Line_Loss {
     type.put(segments,wire);
   }
 
+  //Prints loss percentage for each individual line
   public void loss_percentages(PrintStream output) {
     double tot_percentage = 0.00;
     double loss = 0;
@@ -65,21 +70,17 @@ public class Line_Loss {
   //Creates map for individual wire and their sizes
   public void create_wires() {
     wires = new TreeMap<String,Double>();
-    wires.put("14",.00326);
-    wires.put("12",.00205);
-    wires.put("10",.00129);
-    wires.put("8",.000809);
-    wires.put("6",.00051);
-    wires.put("4",.000321);
-    wires.put("2",.000201);
-    wires.put("1",.00016);
-    wires.put("1/0",.000127);
-    wires.put("2/0",.000101);
-    wires.put("3/0",.0000797);
-    wires.put("4/0",.0000626);
-    wires.put("250 kcmil",.0000535);
-    wires.put("300 kcmil",.0000446);
-
+    wires = new LinkedHashMap<>();
+    scan.nextLine();
+    String line = scan.nextLine();
+    line = line.substring(1,line.length()-1);
+    String[]pairs = line.split(", ");
+    for(int i = 0; i < pairs.length; i++) {
+      String[]val = pairs[i].split("=");
+      String type = val[0];
+      Double area = Double.parseDouble(val[1]);
+      wires.put(type,area);
+    }
   }
 
   //Prints allowed wires
@@ -93,10 +94,12 @@ public class Line_Loss {
     return wires.containsKey(s);
   }
 
+  //Number of segments
   public int size(){
     return segments;
   }
 
+  //To print table
   private static void print_value(PrintStream output, String wd) {
     output.print(wd);
     for(int i = 0; i < 10 - wd.length(); i++) {
@@ -104,6 +107,7 @@ public class Line_Loss {
     }
   }
 
+  //To print table
   private static void print_value(PrintStream output, int wd) {
     output.print(wd);
     String w = String.valueOf(wd);
@@ -112,6 +116,7 @@ public class Line_Loss {
     }
   }
 
+  //To print table
   private static void print_value(PrintStream output, double wd) {
     output.print(wd);
     String w = String.valueOf(wd);

@@ -881,167 +881,181 @@ public class CFLL{
 
   //Allows the user to add segments to the branch
   public static void Seg_frame(PrintStream output, String name, int volt) {
+    try
+    {
+      JFrame frame = set_small_frame(800,300);
+      Line_Loss bran = new Line_Loss(volt);
+      JButton Add = new JButton("ADD");
+      JButton Next = new JButton("DONE");
+      JTextArea typeArea = new JTextArea(2,20);
+      typeArea.setLineWrap(true);
+      typeArea.setWrapStyleWord(true);
+      typeArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel typeLabel = new JLabel("Type");
+      typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea lengthArea = new JTextArea(2,20);
+      lengthArea.setLineWrap(true);
+      lengthArea.setWrapStyleWord(true);
+      lengthArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel lengthLabel = new JLabel("Length");
+      lengthLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea ampArea = new JTextArea(2,20);
+      ampArea.setLineWrap(true);
+      ampArea.setWrapStyleWord(true);
+      ampArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel ampLabel = new JLabel("AMP LOAD");
+      ampLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel length = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel amp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      control.add(Add);
+      control.add(Next);
+      type.add(typeLabel, BorderLayout.NORTH);
+      type.add(typeArea,BorderLayout.CENTER);
+      length.add(lengthLabel, BorderLayout.NORTH);
+      length.add(lengthArea,BorderLayout.CENTER);
+      amp.add(ampLabel, BorderLayout.NORTH);
+      amp.add(ampArea,BorderLayout.CENTER);
+      info.add(type,BorderLayout.NORTH);
+      info.add(length,BorderLayout.CENTER);
+      info.add(amp,BorderLayout.SOUTH);
+      JTextArea infoTextArea = new JTextArea();
+      infoTextArea.setLineWrap(true);
+      infoTextArea.setWrapStyleWord(true);
+      infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load of this segment below.\nWires:\n"+bran.print_wires());
+      infoTextArea.setBackground(new Color(241,241,241));
+      infoTextArea.setEditable(false);
+      infoTextArea.setMargin(new Insets(5, 5, 5,5));
+      JPanel infoPanel = new JPanel(new BorderLayout());
+      infoPanel.add(infoTextArea, BorderLayout.CENTER);
+      JPanel mainPanel = new JPanel(new BorderLayout());
+      mainPanel.add(infoPanel, BorderLayout.NORTH);
+      mainPanel.add(info, BorderLayout.CENTER);
+      mainPanel.add(control, BorderLayout.SOUTH);
+      frame.add(mainPanel, BorderLayout.CENTER);
 
-    JFrame frame = set_small_frame(800,300);
-    Line_Loss bran = new Line_Loss(volt);
-    JButton Add = new JButton("ADD");
-    JButton Next = new JButton("DONE");
-    JTextArea typeArea = new JTextArea(2,20);
-    typeArea.setLineWrap(true);
-    typeArea.setWrapStyleWord(true);
-    typeArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel typeLabel = new JLabel("Type");
-    typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea lengthArea = new JTextArea(2,20);
-    lengthArea.setLineWrap(true);
-    lengthArea.setWrapStyleWord(true);
-    lengthArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel lengthLabel = new JLabel("Length");
-    lengthLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea ampArea = new JTextArea(2,20);
-    ampArea.setLineWrap(true);
-    ampArea.setWrapStyleWord(true);
-    ampArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel ampLabel = new JLabel("AMP LOAD");
-    ampLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel length = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel amp = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    control.add(Add);
-    control.add(Next);
-    type.add(typeLabel, BorderLayout.NORTH);
-    type.add(typeArea,BorderLayout.CENTER);
-    length.add(lengthLabel, BorderLayout.NORTH);
-    length.add(lengthArea,BorderLayout.CENTER);
-    amp.add(ampLabel, BorderLayout.NORTH);
-    amp.add(ampArea,BorderLayout.CENTER);
-    info.add(type,BorderLayout.NORTH);
-    info.add(length,BorderLayout.CENTER);
-    info.add(amp,BorderLayout.SOUTH);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load of this segment below.");
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(info, BorderLayout.CENTER);
-    mainPanel.add(control, BorderLayout.SOUTH);
-    frame.add(mainPanel, BorderLayout.CENTER);
+      Add.addActionListener((e) -> {
+        String ln = lengthArea.getText().trim();
+        String ld = ampArea.getText().trim();
+        String tp = typeArea.getText().trim();
+        int len = Integer.parseInt(ln);
+        double lod = Double.parseDouble(ld);
+        bran.new_line(len,lod,tp);
+        lengthArea.setText(null);
+        ampArea.setText(null);
+      });
 
-    Add.addActionListener((e) -> {
-      String ln = lengthArea.getText().trim();
-      String ld = ampArea.getText().trim();
-      String tp = typeArea.getText().trim();
-      int len = Integer.parseInt(ln);
-      double lod = Double.parseDouble(ld);
-      bran.new_line(len,lod,tp);
-      lengthArea.setText(null);
-      ampArea.setText(null);
-    });
+      Next.addActionListener((e) -> {
+        output.println("Branch: " + name + "         Voltage: " + volt + " V");
+        output.println("Seg#      Wire      LN(ft)    LL(V)     LP(%)     CLP(%)");
+        bran.loss_percentages(output);
+        output.println();
+        Branch_frame(output);
+        frame.setVisible(false);
+      });
+    }
+    catch(FileNotFoundException b)
+    {
+      b.printStackTrace();
+    }
 
-    Next.addActionListener((e) -> {
-      output.println("Branch: " + name + "         Voltage: " + volt + " V");
-      output.println("Seg#      Wire      LN(ft)    LL(V)     LP(%)     CLP(%)");
-      bran.loss_percentages(output);
-      output.println();
-      Branch_frame(output);
-      frame.setVisible(false);
-    });
   }
 
   //Allows user to add segments to branch of existing files
   public static void Seg_frame(PrintStream output, String name, int volt, Scanner scan) {
+    try
+    {
+      JFrame frame = set_small_frame(800,300);
+      Line_Loss bran = new Line_Loss(volt);
+      JButton Add = new JButton("ADD");
+      JButton Next = new JButton("DONE");
+      JTextArea typeArea = new JTextArea(2,20);
+      typeArea.setLineWrap(true);
+      typeArea.setWrapStyleWord(true);
+      typeArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel typeLabel = new JLabel("Type");
+      typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea lengthArea = new JTextArea(2,20);
+      lengthArea.setLineWrap(true);
+      lengthArea.setWrapStyleWord(true);
+      lengthArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel lengthLabel = new JLabel("Length");
+      lengthLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea ampArea = new JTextArea(2,20);
+      ampArea.setLineWrap(true);
+      ampArea.setWrapStyleWord(true);
+      ampArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel ampLabel = new JLabel("AMP LOAD");
+      ampLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel length = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel amp = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      control.add(Add);
+      control.add(Next);
+      type.add(typeLabel, BorderLayout.NORTH);
+      type.add(typeArea,BorderLayout.CENTER);
+      length.add(lengthLabel, BorderLayout.NORTH);
+      length.add(lengthArea,BorderLayout.CENTER);
+      amp.add(ampLabel, BorderLayout.NORTH);
+      amp.add(ampArea,BorderLayout.CENTER);
+      info.add(type,BorderLayout.NORTH);
+      info.add(length,BorderLayout.CENTER);
+      info.add(amp,BorderLayout.SOUTH);
+      JTextArea infoTextArea = new JTextArea();
+      infoTextArea.setLineWrap(true);
+      infoTextArea.setWrapStyleWord(true);
+      infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load of this segment below.");
+      infoTextArea.setBackground(new Color(241,241,241));
+      infoTextArea.setEditable(false);
+      infoTextArea.setMargin(new Insets(5, 5, 5,5));
+      JPanel infoPanel = new JPanel(new BorderLayout());
+      infoPanel.add(infoTextArea, BorderLayout.CENTER);
+      JPanel mainPanel = new JPanel(new BorderLayout());
+      mainPanel.add(infoPanel, BorderLayout.NORTH);
+      mainPanel.add(info, BorderLayout.CENTER);
+      mainPanel.add(control, BorderLayout.SOUTH);
+      frame.add(mainPanel, BorderLayout.CENTER);
 
-    JFrame frame = set_small_frame(800,300);
-    Line_Loss bran = new Line_Loss(volt);
-    JButton Add = new JButton("ADD");
-    JButton Next = new JButton("DONE");
-    JTextArea typeArea = new JTextArea(2,20);
-    typeArea.setLineWrap(true);
-    typeArea.setWrapStyleWord(true);
-    typeArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel typeLabel = new JLabel("Type");
-    typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea lengthArea = new JTextArea(2,20);
-    lengthArea.setLineWrap(true);
-    lengthArea.setWrapStyleWord(true);
-    lengthArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel lengthLabel = new JLabel("Length");
-    lengthLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea ampArea = new JTextArea(2,20);
-    ampArea.setLineWrap(true);
-    ampArea.setWrapStyleWord(true);
-    ampArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel ampLabel = new JLabel("AMP LOAD");
-    ampLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel length = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel amp = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    control.add(Add);
-    control.add(Next);
-    type.add(typeLabel, BorderLayout.NORTH);
-    type.add(typeArea,BorderLayout.CENTER);
-    length.add(lengthLabel, BorderLayout.NORTH);
-    length.add(lengthArea,BorderLayout.CENTER);
-    amp.add(ampLabel, BorderLayout.NORTH);
-    amp.add(ampArea,BorderLayout.CENTER);
-    info.add(type,BorderLayout.NORTH);
-    info.add(length,BorderLayout.CENTER);
-    info.add(amp,BorderLayout.SOUTH);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the type of wire, the length of the wire, and the amp load of this segment below.");
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(info, BorderLayout.CENTER);
-    mainPanel.add(control, BorderLayout.SOUTH);
-    frame.add(mainPanel, BorderLayout.CENTER);
+      Add.addActionListener((e) -> {
+        String ln = lengthArea.getText().trim();
+        String ld = ampArea.getText().trim();
+        String tp = typeArea.getText().trim();
+        int len = Integer.parseInt(ln);
+        double lod = Double.parseDouble(ld);
+        bran.new_line(len,lod,tp);
+        lengthArea.setText(null);
+        ampArea.setText(null);
+      });
 
-    Add.addActionListener((e) -> {
-      String ln = lengthArea.getText().trim();
-      String ld = ampArea.getText().trim();
-      String tp = typeArea.getText().trim();
-      int len = Integer.parseInt(ln);
-      double lod = Double.parseDouble(ld);
-      bran.new_line(len,lod,tp);
-      lengthArea.setText(null);
-      ampArea.setText(null);
-    });
+      Next.addActionListener((e) -> {
+        output.println("Branch: " + name + "         Voltage: " + volt + " V");
+        output.println("Seg#      Wire      LN(ft)    LL(V)     LP(%)     CLP(%)");
+        bran.loss_percentages(output);
+        output.println();
+        scan.nextLine();
+        String line2 = scan.nextLine();
+        while(!line2.contains("Branch") && scan.hasNextLine()){
+          line2 = scan.nextLine();
+        }
+        if(line2.contains("Branch")) {
+          Branch_frame(output,scan,line2);
+          frame.setVisible(false);
+        } else {
+          openFile2();
+          System.exit(0);
+        }
 
-    Next.addActionListener((e) -> {
-      output.println("Branch: " + name + "         Voltage: " + volt + " V");
-      output.println("Seg#      Wire      LN(ft)    LL(V)     LP(%)     CLP(%)");
-      bran.loss_percentages(output);
-      output.println();
-      scan.nextLine();
-      String line2 = scan.nextLine();
-      while(!line2.contains("Branch") && scan.hasNextLine()){
-        line2 = scan.nextLine();
-      }
-      if(line2.contains("Branch")) {
-        Branch_frame(output,scan,line2);
-        frame.setVisible(false);
-      } else {
-        openFile2();
-        System.exit(0);
-      }
+      });
+    }
+    catch(FileNotFoundException b)
+    {
+      b.printStackTrace();
+    }
 
-    });
   }
 
   //Sets the frame size and information
