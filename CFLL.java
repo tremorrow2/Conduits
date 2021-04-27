@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterJob;
+
 
 
 /*
@@ -128,6 +127,7 @@ public class CFLL{
 
   }
 
+  //Ask the user if they want to edit conduit sizing
   public static void FirstQ(String name,PrintStream output,Scanner scan) {
 
     String date = get_date();
@@ -261,7 +261,7 @@ public class CFLL{
     });
   }
 
-  //
+  //Ask if the user wants to edit selected run
   public static void Con_frame(PrintStream output, Scanner scan, String line){
     Scanner look = new Scanner(line);
     JFrame frame = set_small_frame(800,150);
@@ -411,233 +411,250 @@ public class CFLL{
   }
 
   //This allows user to add components(Wire, Signal Cables, Fiber Optic, Miscellaneous) to the conduit
-  public static void Run_frame(String size, PrintStream output, String name, String age, int sched) {
+  public static void Run_frame(String size, PrintStream output, String name, String age, int sched)  {
 
-    JFrame frame = set_small_frame(800,550);
-    Conduit con1 = new Conduit();
-    con1.existence(name,sched,size,age);
-    JButton AddWire = new JButton("Add Wire");
-    JButton AddMCable = new JButton("Add Signal Cable");
-    JButton AddFiberOptic = new JButton("Add FiberOptic");
-    JButton AddMisc = new JButton("Add Misc");
-    JButton Done = new JButton("Done");
-    JTextArea typeArea = new JTextArea(2,20);
-    typeArea.setLineWrap(true);
-    typeArea.setWrapStyleWord(true);
-    typeArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel typeLabel = new JLabel("Type");
-    typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea amountArea = new JTextArea(2,20);
-    amountArea.setLineWrap(true);
-    amountArea.setWrapStyleWord(true);
-    amountArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel amountLabel = new JLabel("Amount");
-    amountLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea awgArea = new JTextArea(2,20);
-    awgArea.setLineWrap(true);
-    awgArea.setWrapStyleWord(true);
-    awgArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel awgLabel = new JLabel("AWG");
-    awgLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel amount = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel awg = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    control.add(AddWire);
-    control.add(AddMCable);
-    control.add(AddFiberOptic);
-    control.add(AddMisc);
-    control.add(Done);
-    type.add(typeLabel, BorderLayout.NORTH);
-    type.add(typeArea,BorderLayout.CENTER);
-    amount.add(amountLabel, BorderLayout.NORTH);
-    amount.add(amountArea,BorderLayout.CENTER);
-    awg.add(awgLabel, BorderLayout.NORTH);
-    awg.add(awgArea,BorderLayout.CENTER);
-    info.add(type,BorderLayout.NORTH);
-    info.add(amount,BorderLayout.CENTER);
-    info.add(awg,BorderLayout.SOUTH);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nElectrical Power Wires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(info, BorderLayout.CENTER);
-    mainPanel.add(control, BorderLayout.SOUTH);
-    frame.add(mainPanel, BorderLayout.CENTER);
+    try
+    {
+      JFrame frame = set_small_frame(800,550);
+      Conduit con1 = new Conduit() ;
+      con1.existence(name,sched,size,age);
+      JButton AddWire = new JButton("Add Wire");
+      JButton AddMCable = new JButton("Add Signal Cable");
+      JButton AddFiberOptic = new JButton("Add FiberOptic");
+      JButton AddMisc = new JButton("Add Misc");
+      JButton Done = new JButton("Done");
+      JTextArea typeArea = new JTextArea(2,20);
+      typeArea.setLineWrap(true);
+      typeArea.setWrapStyleWord(true);
+      typeArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel typeLabel = new JLabel("Type");
+      typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea amountArea = new JTextArea(2,20);
+      amountArea.setLineWrap(true);
+      amountArea.setWrapStyleWord(true);
+      amountArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel amountLabel = new JLabel("Amount");
+      amountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea awgArea = new JTextArea(2,20);
+      awgArea.setLineWrap(true);
+      awgArea.setWrapStyleWord(true);
+      awgArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel awgLabel = new JLabel("AWG");
+      awgLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel amount = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel awg = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      control.add(AddWire);
+      control.add(AddMCable);
+      control.add(AddFiberOptic);
+      control.add(AddMisc);
+      control.add(Done);
+      type.add(typeLabel, BorderLayout.NORTH);
+      type.add(typeArea,BorderLayout.CENTER);
+      amount.add(amountLabel, BorderLayout.NORTH);
+      amount.add(amountArea,BorderLayout.CENTER);
+      awg.add(awgLabel, BorderLayout.NORTH);
+      awg.add(awgArea,BorderLayout.CENTER);
+      info.add(type,BorderLayout.NORTH);
+      info.add(amount,BorderLayout.CENTER);
+      info.add(awg,BorderLayout.SOUTH);
+      JTextArea infoTextArea = new JTextArea();
+      infoTextArea.setLineWrap(true);
+      infoTextArea.setWrapStyleWord(true);
+      infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nElectrical Power Wires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
+      infoTextArea.setBackground(new Color(241,241,241));
+      infoTextArea.setEditable(false);
+      infoTextArea.setMargin(new Insets(5, 5, 5,5));
+      JPanel infoPanel = new JPanel(new BorderLayout());
+      infoPanel.add(infoTextArea, BorderLayout.CENTER);
+      JPanel mainPanel = new JPanel(new BorderLayout());
+      mainPanel.add(infoPanel, BorderLayout.NORTH);
+      mainPanel.add(info, BorderLayout.CENTER);
+      mainPanel.add(control, BorderLayout.SOUTH);
+      frame.add(mainPanel, BorderLayout.CENTER);
 
-    AddWire.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_wires(w,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddWire.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_wires(w,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddMCable.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      String g = awgArea.getText().trim();
-      int g2 = Integer.parseInt(g);
-      con1.add_multiCable(w,g2,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddMCable.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        String g = awgArea.getText().trim();
+        int g2 = Integer.parseInt(g);
+        con1.add_multiCable(w,g2,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddFiberOptic.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      int w2 = Integer.parseInt(w);
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_fiberOptic(w2,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddFiberOptic.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        int w2 = Integer.parseInt(w);
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_fiberOptic(w2,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddMisc.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_misc(w,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddMisc.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_misc(w,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    Done.addActionListener((e) -> {
-      con1.trade_size(output);
-      frame.setVisible(false);
-      Con_frame(output);
-    });
+      Done.addActionListener((e) -> {
+        con1.trade_size(output);
+        frame.setVisible(false);
+        Con_frame(output);
+      });
+    }
+    catch(FileNotFoundException b)
+    {
+      b.printStackTrace();
+    }
+
   }
 
-  //
+  //This allows user to add components(Wire, Signal Cables, Fiber Optic, Miscellaneous) to the conduit for the edited file
   public static void Run_frame(String size, PrintStream output, String name, String age, int sched, Scanner scan) {
 
-    JFrame frame = set_small_frame(800,550);
-    Conduit con1 = new Conduit();
-    con1.existence(name,sched,size,age);
-    JButton AddWire = new JButton("Add Wire");
-    JButton AddMCable = new JButton("Add Signal Cable");
-    JButton AddFiberOptic = new JButton("Add FiberOptic");
-    JButton AddMisc = new JButton("Add Misc");
-    JButton Done = new JButton("Done");
-    JTextArea typeArea = new JTextArea(2,20);
-    typeArea.setLineWrap(true);
-    typeArea.setWrapStyleWord(true);
-    typeArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel typeLabel = new JLabel("Type");
-    typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea amountArea = new JTextArea(2,20);
-    amountArea.setLineWrap(true);
-    amountArea.setWrapStyleWord(true);
-    amountArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel amountLabel = new JLabel("Amount");
-    amountLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JTextArea awgArea = new JTextArea(2,20);
-    awgArea.setLineWrap(true);
-    awgArea.setWrapStyleWord(true);
-    awgArea.setMargin(new Insets(5, 5, 5,5));
-    JLabel awgLabel = new JLabel("AWG");
-    awgLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel amount = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel awg = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    control.add(AddWire);
-    control.add(AddMCable);
-    control.add(AddFiberOptic);
-    control.add(AddMisc);
-    control.add(Done);
-    type.add(typeLabel, BorderLayout.NORTH);
-    type.add(typeArea,BorderLayout.CENTER);
-    amount.add(amountLabel, BorderLayout.NORTH);
-    amount.add(amountArea,BorderLayout.CENTER);
-    awg.add(awgLabel, BorderLayout.NORTH);
-    awg.add(awgArea,BorderLayout.CENTER);
-    info.add(type,BorderLayout.NORTH);
-    info.add(amount,BorderLayout.CENTER);
-    info.add(awg,BorderLayout.SOUTH);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nElectrical Power Wires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(info, BorderLayout.CENTER);
-    mainPanel.add(control, BorderLayout.SOUTH);
-    frame.add(mainPanel, BorderLayout.CENTER);
+    try
+    {
+      JFrame frame = set_small_frame(800,550);
+      Conduit con1 = new Conduit();
+      con1.existence(name,sched,size,age);
+      JButton AddWire = new JButton("Add Wire");
+      JButton AddMCable = new JButton("Add Signal Cable");
+      JButton AddFiberOptic = new JButton("Add FiberOptic");
+      JButton AddMisc = new JButton("Add Misc");
+      JButton Done = new JButton("Done");
+      JTextArea typeArea = new JTextArea(2,20);
+      typeArea.setLineWrap(true);
+      typeArea.setWrapStyleWord(true);
+      typeArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel typeLabel = new JLabel("Type");
+      typeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea amountArea = new JTextArea(2,20);
+      amountArea.setLineWrap(true);
+      amountArea.setWrapStyleWord(true);
+      amountArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel amountLabel = new JLabel("Amount");
+      amountLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JTextArea awgArea = new JTextArea(2,20);
+      awgArea.setLineWrap(true);
+      awgArea.setWrapStyleWord(true);
+      awgArea.setMargin(new Insets(5, 5, 5,5));
+      JLabel awgLabel = new JLabel("AWG");
+      awgLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      JPanel type = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel amount = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel awg = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      JPanel info = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      control.add(AddWire);
+      control.add(AddMCable);
+      control.add(AddFiberOptic);
+      control.add(AddMisc);
+      control.add(Done);
+      type.add(typeLabel, BorderLayout.NORTH);
+      type.add(typeArea,BorderLayout.CENTER);
+      amount.add(amountLabel, BorderLayout.NORTH);
+      amount.add(amountArea,BorderLayout.CENTER);
+      awg.add(awgLabel, BorderLayout.NORTH);
+      awg.add(awgArea,BorderLayout.CENTER);
+      info.add(type,BorderLayout.NORTH);
+      info.add(amount,BorderLayout.CENTER);
+      info.add(awg,BorderLayout.SOUTH);
+      JTextArea infoTextArea = new JTextArea();
+      infoTextArea.setLineWrap(true);
+      infoTextArea.setWrapStyleWord(true);
+      infoTextArea.setText("Here you will put the components into your conduit, in the type box choose a value from one of the list below and for the amount type an integer. If it is a signal cable also input the correct AWG. After you are done click the correct add buttons to add the component. Press done when you are done with this run.\n\nElectrical Power Wires:\n" + con1.print_wires() + "\n\nSignal Cables:\n" + con1.print_multicables() + "\n\nFiber Optics:\n" + con1.print_fiberoptics() + "\n\nMiscellaneous:\n" + con1.print_misc());
+      infoTextArea.setBackground(new Color(241,241,241));
+      infoTextArea.setEditable(false);
+      infoTextArea.setMargin(new Insets(5, 5, 5,5));
+      JPanel infoPanel = new JPanel(new BorderLayout());
+      infoPanel.add(infoTextArea, BorderLayout.CENTER);
+      JPanel mainPanel = new JPanel(new BorderLayout());
+      mainPanel.add(infoPanel, BorderLayout.NORTH);
+      mainPanel.add(info, BorderLayout.CENTER);
+      mainPanel.add(control, BorderLayout.SOUTH);
+      frame.add(mainPanel, BorderLayout.CENTER);
 
-    AddWire.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_wires(w,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddWire.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_wires(w,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddMCable.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      String g = awgArea.getText().trim();
-      int g2 = Integer.parseInt(g);
-      con1.add_multiCable(w,g2,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddMCable.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        String g = awgArea.getText().trim();
+        int g2 = Integer.parseInt(g);
+        con1.add_multiCable(w,g2,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddFiberOptic.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      int w2 = Integer.parseInt(w);
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_fiberOptic(w2,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddFiberOptic.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        int w2 = Integer.parseInt(w);
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_fiberOptic(w2,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    AddMisc.addActionListener((e) -> {
-      String w = typeArea.getText().trim();
-      String a = amountArea.getText().trim();
-      int a2 = Integer.parseInt(a);
-      con1.add_misc(w,a2);
-      typeArea.setText(null);
-      amountArea.setText(null);
-      awgArea.setText(null);
-    });
+      AddMisc.addActionListener((e) -> {
+        String w = typeArea.getText().trim();
+        String a = amountArea.getText().trim();
+        int a2 = Integer.parseInt(a);
+        con1.add_misc(w,a2);
+        typeArea.setText(null);
+        amountArea.setText(null);
+        awgArea.setText(null);
+      });
 
-    Done.addActionListener((e) -> {
-      con1.trade_size(output);
-      frame.setVisible(false);
-      String line = scan.nextLine();
-      Con_frame(output,scan,line);
-    });
+      Done.addActionListener((e) -> {
+        con1.trade_size(output);
+        frame.setVisible(false);
+        String line = scan.nextLine();
+        Con_frame(output,scan,line);
+      });
+    }
+    catch(FileNotFoundException b)
+    {
+      b.printStackTrace();
+    }
+
+
   }
 
-  //Ask the user if they want to calculate Line Loss
+  //Ask the user if they want to calculate the line loss
   public static void LineQ_frame(PrintStream output) {
 
     JFrame frame = set_small_frame(800,150);
@@ -679,7 +696,7 @@ public class CFLL{
 
   }
 
-  //
+  //Ask the user if they want edit Line Loss of this file
   public static void LineQ_frame(PrintStream output, Scanner scan, String line) {
 
     JFrame frame = set_small_frame(800,150);
@@ -729,72 +746,6 @@ public class CFLL{
   }
 
   //Prompts the user to give the name of the branch and the total voltage for this branch
-  public static void Branch_frame(PrintStream output, Scanner scan, String line) {
-    Scanner look = new Scanner(line);
-    look.next();
-    String nm = look.next();
-    look.next();
-    String volt = look.next();
-    int vt = Integer.parseInt(volt);
-    JFrame frame = set_small_frame(800,200);
-    JLabel nameLabel = new JLabel("Do you want to edit " + nm + ".");
-    nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    JButton Yes = new JButton("YES");
-    JButton No = new JButton("NO");
-    JButton Done = new JButton("DONE");
-    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    control.add(Yes);
-    control.add(No);
-    control.add(Done);
-    JTextArea infoTextArea = new JTextArea();
-    infoTextArea.setLineWrap(true);
-    infoTextArea.setWrapStyleWord(true);
-    infoTextArea.setText("Give the name of the branch in the box below and the total voltage of the branch in the box below that.\n Then click the next button.");
-    infoTextArea.setBackground(new Color(241,241,241));
-    infoTextArea.setEditable(false);
-    infoTextArea.setMargin(new Insets(5, 5, 5,5));
-    JPanel infoPanel = new JPanel(new BorderLayout());
-    infoPanel.add(infoTextArea, BorderLayout.CENTER);
-    JPanel mainPanel = new JPanel(new BorderLayout());
-    mainPanel.add(infoPanel, BorderLayout.NORTH);
-    mainPanel.add(nameLabel, BorderLayout.CENTER);
-    mainPanel.add(control, BorderLayout.SOUTH);
-    frame.add(mainPanel, BorderLayout.CENTER);
-
-    Yes.addActionListener((e) -> {
-
-      System.err.println(volt);
-      Seg_frame(output,nm,vt,scan);
-      frame.setVisible(false);
-    });
-
-    No.addActionListener((e) -> {
-      output.println(line);
-      String go = scan.nextLine();
-      while(!go.contains("Branch") && scan.hasNextLine()) {
-        output.println(go);
-        go = scan.nextLine();
-      }
-      if(go.contains("Branch")) {
-        Branch_frame(output,scan,go);
-        frame.setVisible(false);
-      } else {
-        openFile2();
-        System.exit(0);
-      }
-
-    });
-
-    Done.addActionListener((e) -> {
-      while(scan.hasNextLine()){
-        output.print(scan.nextLine());
-      }
-      openFile2();
-      System.exit(0);
-    });
-
-  }
-
   public static void Branch_frame(PrintStream output) {
 
     JFrame frame = set_small_frame(800,275);
@@ -856,6 +807,73 @@ public class CFLL{
 
     Done.addActionListener((e) -> {
       openFile();
+      System.exit(0);
+    });
+
+  }
+
+  //Ask the user if the current branch is the branch they want to change
+  public static void Branch_frame(PrintStream output, Scanner scan, String line) {
+    Scanner look = new Scanner(line);
+    look.next();
+    String nm = look.next();
+    look.next();
+    String volt = look.next();
+    int vt = Integer.parseInt(volt);
+    JFrame frame = set_small_frame(800,200);
+    JLabel nameLabel = new JLabel("Do you want to edit " + nm + ".");
+    nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    JButton Yes = new JButton("YES");
+    JButton No = new JButton("NO");
+    JButton Done = new JButton("DONE");
+    JPanel control = new JPanel(new FlowLayout(FlowLayout.CENTER));
+    control.add(Yes);
+    control.add(No);
+    control.add(Done);
+    JTextArea infoTextArea = new JTextArea();
+    infoTextArea.setLineWrap(true);
+    infoTextArea.setWrapStyleWord(true);
+    infoTextArea.setText("Give the name of the branch in the box below and the total voltage of the branch in the box below that.\n Then click the next button.");
+    infoTextArea.setBackground(new Color(241,241,241));
+    infoTextArea.setEditable(false);
+    infoTextArea.setMargin(new Insets(5, 5, 5,5));
+    JPanel infoPanel = new JPanel(new BorderLayout());
+    infoPanel.add(infoTextArea, BorderLayout.CENTER);
+    JPanel mainPanel = new JPanel(new BorderLayout());
+    mainPanel.add(infoPanel, BorderLayout.NORTH);
+    mainPanel.add(nameLabel, BorderLayout.CENTER);
+    mainPanel.add(control, BorderLayout.SOUTH);
+    frame.add(mainPanel, BorderLayout.CENTER);
+
+    Yes.addActionListener((e) -> {
+
+      System.err.println(volt);
+      Seg_frame(output,nm,vt,scan);
+      frame.setVisible(false);
+    });
+
+    No.addActionListener((e) -> {
+      output.println(line);
+      String go = scan.nextLine();
+      while(!go.contains("Branch") && scan.hasNextLine()) {
+        output.println(go);
+        go = scan.nextLine();
+      }
+      if(go.contains("Branch")) {
+        Branch_frame(output,scan,go);
+        frame.setVisible(false);
+      } else {
+        openFile2();
+        System.exit(0);
+      }
+
+    });
+
+    Done.addActionListener((e) -> {
+      while(scan.hasNextLine()){
+        output.print(scan.nextLine());
+      }
+      openFile2();
       System.exit(0);
     });
 
@@ -938,6 +956,7 @@ public class CFLL{
     });
   }
 
+  //Allows user to add segments to branch of existing files
   public static void Seg_frame(PrintStream output, String name, int volt, Scanner scan) {
 
     JFrame frame = set_small_frame(800,300);
@@ -1024,6 +1043,7 @@ public class CFLL{
 
     });
   }
+
   //Sets the frame size and information
   public static JFrame set_small_frame(int x, int y) {
     JFrame frame = new JFrame();
@@ -1062,6 +1082,17 @@ public class CFLL{
     setNimbus();
   }
 
+  //Used to find the file to open
+  public static void edit_file() {
+    setWindows();
+    JFileChooser chooser = new JFileChooser();
+		chooser.showOpenDialog(null);
+		file = chooser.getSelectedFile();
+    file2 = file.getPath().substring(0,file.getPath().length()-4);
+    file2 = file2 + " edit.txt";
+    setNimbus();
+  }
+
   //Sets look of UI
   public static void setNimbus() {
     try {
@@ -1080,6 +1111,7 @@ public class CFLL{
     }
   }
 
+  //Opens the new file when finished
   public static void openFile() {
     try
     {
@@ -1101,6 +1133,7 @@ public class CFLL{
     }
   }
 
+  //Opens the edited file when finished
   public static void openFile2() {
     try
     {
@@ -1122,14 +1155,5 @@ public class CFLL{
     }
   }
 
-  public static void edit_file() {
-    setWindows();
-    JFileChooser chooser = new JFileChooser();
-		chooser.showOpenDialog(null);
-		file = chooser.getSelectedFile();
-    file2 = file.getPath().substring(0,file.getPath().length()-4);
-    file2 = file2 + " edit.txt";
-    setNimbus();
-  }
 
 }
